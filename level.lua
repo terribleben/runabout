@@ -1,3 +1,4 @@
+local Collectible = require 'collectible'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
@@ -6,6 +7,8 @@ local Level = {
    numSegments = 0,
    ponds = {},
    numPonds = 0,
+   collectibles = {},
+   numCollectibles = 0,
 
    Event = {
       NONE = 0,
@@ -34,6 +37,15 @@ function Level:reset()
             height = _SEGMENT_HEIGHT,
          },
    })
+
+   self.numCollectibles = 1
+   local collectibleX = 11.5 * _SEGMENT_HEIGHT
+   self.collectibles[self.numCollectibles] = Collectible:new({
+         position = {
+            x = collectibleX,
+            y = self:_getHeightAtX(collectibleX) - 6,
+         },
+   })
 end
 
 function Level:update(dt)
@@ -52,6 +64,12 @@ function Level:interactWith(craft)
          return self.Event.PLAYER_DEATH
       end
    end
+   for index, collectible in pairs(self.collectibles) do
+      local result = collectible:interactWith(craft)
+      if result == Collectible.Event.PLAYER_COLLECT then
+         -- TODO: delete collectible
+      end
+   end
    return self.Event.NONE
 end
 
@@ -67,6 +85,9 @@ end
 function Level:draw()
    for index, pond in pairs(self.ponds) do
       pond:draw()
+   end
+   for index, collectible in pairs(self.collectibles) do
+      collectible:draw()
    end
       
    self:_drawSegments()

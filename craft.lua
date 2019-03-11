@@ -1,7 +1,7 @@
 local Craft = {
    position = { x = 0, y = 0 },
    velocity = { x = 0, y = 0 },
-   radius = 20,
+   radius = 24,
    angle = 0,
    fuel = 1,
    isActive = false
