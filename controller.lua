@@ -7,6 +7,10 @@ local Controller = {
 function Controller:reset()
    Level:reset()
    Craft:reset()
+   Craft.position = {
+      x = Level.door.position.x,
+      y = Level.door.position.y,
+   }
 end
 
 function Controller:draw()

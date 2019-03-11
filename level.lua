@@ -1,4 +1,5 @@
 local Collectible = require 'collectible'
+local Door = require 'door'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
@@ -9,10 +10,13 @@ local Level = {
    numPonds = 0,
    collectibles = {},
    numCollectibles = 0,
+   numCollectiblesHeld = 0,
+   door = nil,
 
    Event = {
       NONE = 0,
-      PLAYER_DEATH = 1,
+      PLAYER_COLLECT = 1,
+      PLAYER_DEATH = 2,
    },
 }
 
@@ -23,6 +27,8 @@ function Level:reset()
       self.segments[index] = math.random(0, 3)
       self.numSegments = self.numSegments + 1
       end--]]
+   self.numCollectiblesHeld = 0
+   
    self.numSegments = 15
    self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 3, 3, 3, 3, 3 }
 
@@ -48,6 +54,13 @@ function Level:reset()
             y = self:_getHeightAtX(collectibleX) - 6,
          },
    })
+
+   self.door = Door:new({
+         position = {
+            x = 175,
+            y = 150,
+         },
+   })
 end
 
 function Level:update(dt)
@@ -60,21 +73,38 @@ function Level:update(dt)
 end
 
 function Level:interactWith(craft)
+   -- terrain
    if self:collidesWith(craft.position.x, craft.position.y) then
       return self.Event.PLAYER_DEATH
    end
+
+   -- ponds
    for index, pond in pairs(self.ponds) do
       local result = pond:interactWith(craft)
       if result == Pond.Event.PLAYER_DEATH then
          return self.Event.PLAYER_DEATH
       end
    end
+
+   -- collectibles
    for index, collectible in pairs(self.collectibles) do
       local result = collectible:interactWith(craft)
       if result == Collectible.Event.PLAYER_COLLECT then
          self.collectibles[index] = nil
+         self.numCollectiblesHeld = self.numCollectiblesHeld + 1
+         if self.numCollectiblesHeld == self.numCollectibles then
+            self.door.isOpen = true
+         end
       end
    end
+
+   -- door
+   local result = self.door:interactWith(craft)
+   if result == Door.Event.ENTER then
+      -- todo: transition level
+      return self.Event.PLAYER_DEATH
+   end
+
    return self.Event.NONE
 end
 
@@ -94,6 +124,8 @@ function Level:draw()
    for index, collectible in pairs(self.collectibles) do
       collectible:draw()
    end
+
+   self.door:draw()
       
    self:_drawSegments()
 end

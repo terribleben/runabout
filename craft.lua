@@ -11,8 +11,6 @@ local maxVelocity = { x = 175, y = 250 }
 
 function Craft:reset()
    self.isActive = false
-   self.position.x = 400
-   self.position.y = 200
    self.fuel = 1
 end
 
