@@ -15,7 +15,8 @@ function Level:reset()
 end
 
 function Level:collidesWith(x, y)
-   
+   local groundY = self:_getHeightAtX(x)
+   return y >= groundY
 end
 
 function Level:getGroundBaseline()
