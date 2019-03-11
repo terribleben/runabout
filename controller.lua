@@ -23,7 +23,7 @@ function Controller:update(dt)
    Level:update(dt)
    local event = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
-      Craft:reset()
+      self:reset()
    end
 end
 

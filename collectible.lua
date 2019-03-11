@@ -1,10 +1,12 @@
-
+local Geom = require 'geom'
 
 local Collectible = {
    position = { x = 0, y = 0 },
+   velocity = { x = 0, y = 0 },
    radius = 12,
    isCollecting = false,
    targetPosition = nil,
+   _accelerationMag = 0,
 
    Event = {
       NONE = 0,
@@ -14,7 +16,7 @@ local Collectible = {
 }
 
 -- TODO: unify proximity buffer or different per object?
-local _PROXIMITY_BUFFER = 64
+local _PROXIMITY_BUFFER = 128
 
 function Collectible:new(p)
    p = p or {}
@@ -33,6 +35,22 @@ function Collectible:draw()
       self.radius, self.radius
    )
    love.graphics.pop()
+end
+
+function Collectible:update(dt)
+   if self.isCollecting then
+      local distanceToTarget = Geom.distance2(self.position, self.targetPosition)
+      local accelerationMag = 0.2 + (1.0 - (distanceToTarget / _PROXIMITY_BUFFER)) * 0.7
+      self._accelerationMag = math.max(accelerationMag, self._accelerationMag)
+      local acceleration = {
+         x = (self.targetPosition.x - self.position.x) * self._accelerationMag,
+         y = (self.targetPosition.y - self.position.y) * self._accelerationMag,
+      }
+      self.velocity.x = self.velocity.x + acceleration.x
+      self.velocity.y = self.velocity.y + acceleration.y
+      self.position.x = self.position.x + self.velocity.x * dt
+      self.position.y = self.position.y + self.velocity.y * dt
+   end
 end
 
 function Collectible:interactWith(craft)
@@ -58,14 +76,23 @@ function Collectible:interactWith(craft)
 end
 
 function Collectible:_intersects(x, y)
-   -- TODO
-   return false
+   local distance = Geom.distance(
+      self.position.x, self.position.y,
+      x, y
+   )
+   return distance <= self.radius * 2 -- lolb
 end
 
 function Collectible:_isProximate(x, y, angle)
-   -- distance from self.position
-   -- to a line from x, y, x + angle, y + angle
-   -- TODO
+   local isBoundedToSegment, point = Geom.nearestPointOnLineBoundedToSegment(
+      { x = x, y = y },
+      { x = x + _PROXIMITY_BUFFER * math.cos(angle), y = y + _PROXIMITY_BUFFER * math.sin(angle) },
+      { x = self.position.x, y = self.position.y }
+   )
+   if isBoundedToSegment then
+      local distance = Geom.distance(self.position.x, self.position.y, point.x, point.y)
+      return distance < self.radius
+   end
    return false
 end
 

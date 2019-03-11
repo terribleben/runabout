@@ -27,6 +27,7 @@ function Level:reset()
    self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 3, 3, 3, 3, 3 }
 
    self.numPonds = 1
+   self.ponds = {}
    self.ponds[self.numPonds] = Pond:new({
          position = {
             x = 8 * _SEGMENT_HEIGHT,
@@ -39,6 +40,7 @@ function Level:reset()
    })
 
    self.numCollectibles = 1
+   self.collectibles = {}
    local collectibleX = 11.5 * _SEGMENT_HEIGHT
    self.collectibles[self.numCollectibles] = Collectible:new({
          position = {
@@ -51,6 +53,9 @@ end
 function Level:update(dt)
    for index, pond in pairs(self.ponds) do
       pond:update(dt)
+   end
+   for index, collectible in pairs(self.collectibles) do
+      collectible:update(dt)
    end
 end
 
@@ -67,7 +72,7 @@ function Level:interactWith(craft)
    for index, collectible in pairs(self.collectibles) do
       local result = collectible:interactWith(craft)
       if result == Collectible.Event.PLAYER_COLLECT then
-         -- TODO: delete collectible
+         self.collectibles[index] = nil
       end
    end
    return self.Event.NONE
