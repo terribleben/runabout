@@ -1,17 +1,52 @@
+local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
 local Level = {
    segments = {},
    numSegments = 0,
+   ponds = {},
+   numPonds = 0,
+
+   Event = {
+      NONE = 0,
+      PLAYER_DEATH = 1,
+   },
 }
 
 local _SEGMENT_HEIGHT = 64
 
 function Level:reset()
-   for index = 1, 20 do
+   --[[for index = 1, 20 do
       self.segments[index] = math.random(0, 3)
       self.numSegments = self.numSegments + 1
+      end--]]
+   self.numSegments = 15
+   self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 3, 3, 3, 3, 3 }
+
+   self.numPonds = 1
+   self.ponds[self.numPonds] = Pond:new({
+         position = {
+            x = 8 * _SEGMENT_HEIGHT,
+            y = self:getGroundBaseline() - _SEGMENT_HEIGHT * 2 + 12,
+         },
+         size = {
+            width = _SEGMENT_HEIGHT * 2,
+            height = _SEGMENT_HEIGHT,
+         },
+   })
+end
+
+function Level:interactWith(craft)
+   if self:collidesWith(craft.position.x, craft.position.y) then
+      return self.Event.PLAYER_DEATH
    end
+   for index, pond in pairs(self.ponds) do
+      local result = pond:interactWith(craft)
+      if result == Pond.Event.PLAYER_DEATH then
+         return self.Event.PLAYER_DEATH
+      end
+   end
+   return self.Event.NONE
 end
 
 function Level:collidesWith(x, y)
@@ -24,14 +59,25 @@ function Level:getGroundBaseline()
 end
 
 function Level:draw()
+   for index, pond in pairs(self.ponds) do
+      pond:draw()
+   end
+      
+   self:_drawSegments()
+end
+
+function Level:_drawSegments()
    love.graphics.setColor(1, 1, 1, 1)
    local prevHeight
    local xx, yy = 0, self:getGroundBaseline()
    for index, height in pairs(self.segments) do
       if prevHeight then
-         love.graphics.line(
+         love.graphics.polygon(
+            'fill',
             xx - _SEGMENT_HEIGHT, yy - prevHeight * _SEGMENT_HEIGHT,
-            xx, yy - height * _SEGMENT_HEIGHT
+            xx, yy - height * _SEGMENT_HEIGHT,
+            xx, SharedState.viewport.height,
+            xx - _SEGMENT_HEIGHT, SharedState.viewport.height
          )
       end
       prevHeight = height

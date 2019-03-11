@@ -1,6 +1,8 @@
 local Controller = require 'controller'
 local SharedState = require 'sharedstate'
 
+G_VIEWPORT_BUFFER = 800
+
 function love.load()
    _reset()
 end
@@ -30,5 +32,26 @@ function _drawViewportBorder()
       'line',
       0, 0,
       SharedState.viewport.width, SharedState.viewport.height
+   )
+   love.graphics.setColor(0, 0, 0, 1)
+   love.graphics.rectangle(
+      'fill',
+      -G_VIEWPORT_BUFFER, 0,
+      G_VIEWPORT_BUFFER, SharedState.viewport.height
+   )
+   love.graphics.rectangle(
+      'fill',
+      SharedState.viewport.width, 0,
+      G_VIEWPORT_BUFFER, SharedState.viewport.height
+   )
+   love.graphics.rectangle(
+      'fill',
+      -G_VIEWPORT_BUFFER, -G_VIEWPORT_BUFFER,
+      SharedState.viewport.width + 2.0 * G_VIEWPORT_BUFFER, G_VIEWPORT_BUFFER
+   )
+   love.graphics.rectangle(
+      'fill',
+      -G_VIEWPORT_BUFFER, SharedState.viewport.height,
+      SharedState.viewport.width + 2.0 * G_VIEWPORT_BUFFER, G_VIEWPORT_BUFFER
    )
 end

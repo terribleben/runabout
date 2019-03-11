@@ -42,14 +42,15 @@ function Craft:update(dt)
    self.angle = 0
    if love.keyboard.isDown('down') then
       acceleration.y = acceleration.y - 25
-      self.isActive = true
+      if not self.isActive then
+         self.isActive = true
+         self.velocity.y = -5
+      end
    end
    if love.keyboard.isDown('left') then
       acceleration.x = 15
-      self.isActive = true
    elseif love.keyboard.isDown('right') then
       acceleration.x = -15
-      self.isActive = true
    else
       self.velocity.x = self.velocity.x * 0.8
    end

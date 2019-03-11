@@ -16,7 +16,8 @@ end
 
 function Controller:update(dt)
    Craft:update(dt)
-   if Level:collidesWith(Craft.position.x, Craft.position.y) then
+   local event = Level:interactWith(Craft)
+   if event == Level.Event.PLAYER_DEATH then
       Craft:reset()
    end
 end
