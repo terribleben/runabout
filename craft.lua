@@ -3,6 +3,7 @@ local Craft = {
    velocity = { x = 0, y = 0 },
    radius = 20,
    angle = 0,
+   fuel = 1,
    isActive = false
 }
 
@@ -12,6 +13,7 @@ function Craft:reset()
    self.isActive = false
    self.position.x = 400
    self.position.y = 200
+   self.fuel = 1
 end
 
 function Craft:draw()
@@ -40,12 +42,14 @@ function Craft:update(dt)
    local acceleration = { x = 0, y = 0 }
    acceleration.y = 15
    self.angle = 0
-   if love.keyboard.isDown('down') then
+   if love.keyboard.isDown('down') and self.fuel > 0 then
       acceleration.y = acceleration.y - 25
       if not self.isActive then
          self.isActive = true
          self.velocity.y = -5
       end
+      self.fuel = self.fuel - 0.1 * dt
+      if self.fuel < 0 then self.fuel = 0 end
    end
    if love.keyboard.isDown('left') then
       acceleration.x = 15
@@ -65,6 +69,11 @@ function Craft:update(dt)
       self.position.y = self.position.y + self.velocity.y * dt
       self.angle = self.velocity.x * 0.002
    end
+end
+
+function Craft:refuel(magnitude)
+   self.fuel = self.fuel + magnitude * 0.008
+   if self.fuel > 1 then self.fuel = 1 end
 end
 
 return Craft

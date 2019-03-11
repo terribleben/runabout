@@ -36,6 +36,12 @@ function Level:reset()
    })
 end
 
+function Level:update(dt)
+   for index, pond in pairs(self.ponds) do
+      pond:update(dt)
+   end
+end
+
 function Level:interactWith(craft)
    if self:collidesWith(craft.position.x, craft.position.y) then
       return self.Event.PLAYER_DEATH
