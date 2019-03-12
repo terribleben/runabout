@@ -4,10 +4,11 @@ local Level = require 'level'
 local LevelData = require 'leveldata'
 
 local Controller = {
+   _currentLevelId = 1,
 }
 
 function Controller:reset()
-   self:_loadLevel(1)
+   self:_loadLevel(self._currentLevelId)
 end
 
 function Controller:draw()
@@ -30,7 +31,7 @@ function Controller:update(dt)
    Camera:update(Level, Craft.position, dt)
    local event, data = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
-      self:reset()
+      self:_loadLevel(self._currentLevelId)
    elseif event == Level.Event.ENTER_DOOR then
       self:_loadLevel(data.destination)
    end
@@ -40,6 +41,7 @@ function Controller:_loadLevel(levelId)
    Level:reset()
    local levelToLoad = LevelData.levels[levelId];
    Level:loadLevelData(levelToLoad)
+   self._currentLevelId = levelId
    Craft:reset()
    Craft.position = {
       x = Level.initialPlayerPosition.x,
