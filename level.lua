@@ -118,6 +118,11 @@ function Level:getGroundBaseline()
 end
 
 function Level:draw()
+   self:_drawSegments()
+end
+
+function Level:drawBackground()
+   self:_drawSky()
    for index, pond in pairs(self.ponds) do
       pond:draw()
    end
@@ -126,12 +131,11 @@ function Level:draw()
    end
 
    self.door:draw()
-      
-   self:_drawSegments()
+   
 end
 
 function Level:_drawSegments()
-   love.graphics.setColor(1, 1, 1, 1)
+   love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
    local prevHeight
    local xx, yy = 0, self:getGroundBaseline()
    for index, height in pairs(self.segments) do
@@ -179,6 +183,28 @@ function Level:_drawCollisionTest(collidingX)
    end
    local collideY = self:_getHeightAtX(collidingX)
    love.graphics.circle('line', collidingX, collideY, 10)
+end
+
+function Level:_drawSky()
+   local color1 = { r = 87, g = 136, b = 98 }
+   local color2 = { r = 227, g = 207, b = 126 }
+   local numRegions = 12
+   local regionSize = SharedState.viewport.height / numRegions
+   for i = 0, numRegions - 1 do
+      local interp = i / (numRegions - 1)
+      local remain = 1.0 - interp
+      local color = {
+         r = ((color2.r * interp) + (color1.r * remain)) / 255.0,
+         g = ((color2.g * interp) + (color1.g * remain)) / 255.0,
+         b = ((color2.b * interp) + (color1.b * remain)) / 255.0,
+      }
+      love.graphics.setColor(color.r, color.g, color.b, 1)
+      love.graphics.rectangle(
+         'fill',
+         0, i * regionSize,
+         SharedState.viewport.width, regionSize
+      )
+   end
 end
 
 return Level

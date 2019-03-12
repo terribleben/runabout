@@ -20,15 +20,16 @@ end
 function Door:draw()
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
+   love.graphics.setColor(216 / 255, 149 / 255, 110 / 255, 1)
+   local time = love.timer.getTime()
+   love.graphics.rotate(time * 6)
+   love.graphics.circle('line', 0, 0, self.radius, 3)
    if self.isOpen then
-      love.graphics.setColor(1, 0, 1, 1)
+      love.graphics.setColor(1, 1, 1, 1)
+      love.graphics.rotate(time * 0.5)
+      love.graphics.circle('line', 0, 0, self.radius * 0.8, 3)
    else
-      love.graphics.setColor(0.5, 0.5, 0.5, 1)
    end
-   love.graphics.circle(
-      'line',
-      0, 0, self.radius
-   )
    love.graphics.pop()
 end
 

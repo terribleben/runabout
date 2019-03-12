@@ -14,12 +14,12 @@ function Controller:reset()
 end
 
 function Controller:draw()
+   Level:drawBackground()
    Craft:draw()
    Level:draw()
-   love.graphics.setColor(1, 1, 1, 1)
+   love.graphics.setColor(227 / 255, 87 / 255, 91 / 255, 1)
    love.graphics.rectangle('line', 12, 12, 128, 12)
    love.graphics.rectangle('fill', 12, 12, 128 * Craft.fuel, 12)
-   love.graphics.print("fuel", 12, 32)
 end
 
 function Controller:update(dt)

@@ -24,7 +24,7 @@ end
 function Pond:draw()
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
-   love.graphics.setColor(0.5, 0.5, 0.5, 1)
+   love.graphics.setColor(227 / 255, 87 / 255, 91 / 255, 1)
    love.graphics.rectangle('fill', 0, 0, self.size.width, self.size.height)
    if self.refuelMagnitude > 0 then
       love.graphics.push()

@@ -21,17 +21,29 @@ function Craft:draw()
    if self.isActive then
       love.graphics.setColor(1, 1, 1, 1)
    else
-      if math.floor(love.timer.getTime() * 4) % 2 == 1 then
+      if math.floor(love.timer.getTime() * 6) % 2 == 1 then
          love.graphics.setColor(1, 1, 1, 1)
       else
-         love.graphics.setColor(0.5, 0.5, 0.5, 1)
+         love.graphics.setColor(216 / 255, 149 / 255, 110 / 255, 1)
       end
-      love.graphics.print("ready", -16, 16)
+      love.graphics.print("ready", -16, 32)
    end
-   love.graphics.rectangle(
+   --[[love.graphics.rectangle(
       'line',
          -self.radius * 0.5, -self.radius * 0.5,
       self.radius, self.radius
+      )--]]
+   love.graphics.polygon(
+      'fill',
+      -self.radius * 0.55, -self.radius * 0.48,
+      self.radius * 0.55, -self.radius * 0.48,
+      0, self.radius * 0.4
+   )
+   love.graphics.polygon(
+      'fill',
+      -self.radius * 0.4, self.radius * 0.5,
+      self.radius * 0.4, self.radius * 0.5,
+      0, self.radius * -0.1
    )
    love.graphics.pop()
 end
