@@ -2,19 +2,18 @@ local Camera = require 'camera'
 local Craft = require 'craft'
 local Collectible = require 'collectible'
 local Door = require 'door'
+local LevelData = require 'leveldata'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
 local Level = {
    segments = {},
-   numSegments = 0,
    ponds = {},
-   numPonds = 0,
    collectibles = {},
-   numCollectibles = 0,
-   numCollectiblesHeld = 0,
    doors = {},
-   numDoors = 0,
+   size = { width = 0, height = 0 },
+   
+   numCollectiblesHeld = 0,
    initialPlayerPosition = {},
 
    Event = {
@@ -22,64 +21,20 @@ local Level = {
       PLAYER_COLLECT = 1,
       PLAYER_DEATH = 2,
    },
-
-   size = { width = 0, height = 0 }
 }
 
-local _SEGMENT_HEIGHT = 64
+local _GRID_SIZE = 64
 
 function Level:reset()
    --[[for index = 1, 20 do
       self.segments[index] = math.random(0, 3)
-      self.numSegments = self.numSegments + 1
       end--]]
    self.numCollectiblesHeld = 0
 
    -- todo: mult levels
-   self.numSegments = 20
-   self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 3, 3, 4 }
-   self.size = {
-      width = self.numSegments * _SEGMENT_HEIGHT,
-      height = SharedState.viewport.height,
-   }
-
-   self.numPonds = 1
-   self.ponds = {}
-   self.ponds[self.numPonds] = Pond:new({
-         position = {
-            x = 16 * _SEGMENT_HEIGHT,
-            y = self:getGroundBaseline() - _SEGMENT_HEIGHT * 3 + 12,
-         },
-         size = {
-            width = _SEGMENT_HEIGHT * 2,
-            height = _SEGMENT_HEIGHT,
-         },
-   })
-
-   self.numCollectibles = 1
-   self.collectibles = {}
-   local collectibleX = 13.5 * _SEGMENT_HEIGHT
-   self.collectibles[self.numCollectibles] = Collectible:new({
-         position = {
-            x = collectibleX,
-            y = self:_getHeightAtX(collectibleX) - 6,
-         },
-   })
-
-   self.numDoors = 2
-   self.doors[1] = Door:new({
-         position = {
-            x = 175,
-            y = 150,
-         },
-   })
-   self.doors[2] = Door:new({
-         position = {
-            x = 575,
-            y = 175,
-         },
-   })
-   self.initialPlayerPosition = self.doors[1].position
+   local levelToLoad = LevelData.levels[1];
+   self:_loadLevelData(levelToLoad)
+   self.levelId = 1
 end
 
 function Level:update(dt)
@@ -111,10 +66,8 @@ function Level:interactWith(craft)
       if result == Collectible.Event.PLAYER_COLLECT then
          self.collectibles[index] = nil
          self.numCollectiblesHeld = self.numCollectiblesHeld + 1
-         if self.numCollectiblesHeld == self.numCollectibles then
-            -- todo: mult levels
-            self.doors[2].isOpen = true
-         end
+         self:_onPlayerCollect()
+         return self.Event.PLAYER_COLLECT
       end
    end
 
@@ -168,43 +121,44 @@ function Level:_drawSegments()
       if prevHeight then
          love.graphics.polygon(
             'fill',
-            xx - _SEGMENT_HEIGHT, yy - prevHeight * _SEGMENT_HEIGHT,
-            xx, yy - height * _SEGMENT_HEIGHT,
+            xx - _GRID_SIZE, yy - prevHeight * _GRID_SIZE,
+            xx, yy - height * _GRID_SIZE,
             xx, SharedState.viewport.height,
-            xx - _SEGMENT_HEIGHT, SharedState.viewport.height
+            xx - _GRID_SIZE, SharedState.viewport.height
          )
       end
       prevHeight = height
-      xx = xx + _SEGMENT_HEIGHT
+      xx = xx + _GRID_SIZE
    end
 end
 
 function Level:_getSegmentIndexAtX(xx)
-   return math.floor(xx / _SEGMENT_HEIGHT) + 1
+   return math.floor(xx / _GRID_SIZE) + 1
 end
 
 function Level:_getHeightAtX(xx)
    local baseline = self:getGroundBaseline()
    local collidingSegment = self:_getSegmentIndexAtX(xx)
-   local left = { x = (collidingSegment - 1) * _SEGMENT_HEIGHT, y = baseline }
-   local right = { x = collidingSegment * _SEGMENT_HEIGHT, y = baseline }
+   local left = { x = (collidingSegment - 1) * _GRID_SIZE, y = baseline }
+   local right = { x = collidingSegment * _GRID_SIZE, y = baseline }
+   local nSegments = table.getn(self.segments)
    if collidingSegment > 0 then
-      left.y = baseline - self.segments[collidingSegment] * _SEGMENT_HEIGHT
+      left.y = baseline - self.segments[collidingSegment] * _GRID_SIZE
    end
-   if collidingSegment < self.numSegments then
-      right.y = baseline - self.segments[collidingSegment + 1] * _SEGMENT_HEIGHT
+   if collidingSegment < nSegments then
+      right.y = baseline - self.segments[collidingSegment + 1] * _GRID_SIZE
    end
-   local interp = (xx - left.x) / _SEGMENT_HEIGHT
+   local interp = (xx - left.x) / _GRID_SIZE
    return left.y + (right.y - left.y) * interp
 end
 
 function Level:_drawCollisionTest(collidingX)
    local collidingSegment = self:_getSegmentIndexAtX(collidingX)
-   if (collidingSegment > 0 and collidingSegment < self.numSegments) then
+   if (collidingSegment > 0 and collidingSegment < nSegments) then
       love.graphics.setColor(1, 0, 0, 1)
       love.graphics.line(
-         (collidingSegment - 1) * _SEGMENT_HEIGHT, yy - self.segments[collidingSegment] * _SEGMENT_HEIGHT,
-         (collidingSegment) * _SEGMENT_HEIGHT, yy - self.segments[collidingSegment + 1] * _SEGMENT_HEIGHT
+         (collidingSegment - 1) * _GRID_SIZE, yy - self.segments[collidingSegment] * _GRID_SIZE,
+         (collidingSegment) * _GRID_SIZE, yy - self.segments[collidingSegment + 1] * _GRID_SIZE
       )
    end
    local collideY = self:_getHeightAtX(collidingX)
@@ -230,6 +184,76 @@ function Level:_drawSky()
          0, i * regionSize,
          SharedState.viewport.width, regionSize
       )
+   end
+end
+
+function Level:_onPlayerCollect()
+   if self.levelId == 1 then
+      if self.numCollectiblesHeld == 1 then
+         -- todo: mult levels
+         self.doors[2].isOpen = true
+      end
+   end
+end
+
+function Level:_loadLevelData(data)
+   self.segments = {}
+   for index, segment in pairs(data.segments) do
+      table.insert(self.segments, segment)
+   end
+   
+   self.size = {
+      width = (table.getn(self.segments) - 1) * _GRID_SIZE,
+      height = SharedState.viewport.height,
+   }
+
+   self.ponds = {}
+   for index, pond in pairs(data.ponds) do
+      local x = pond.index * _GRID_SIZE
+      local position = {
+         x = x,
+         y = self:_getHeightAtX(x) + 12,
+      }
+      table.insert(
+         self.ponds,
+         Pond:new({
+               position = position,
+               size = {
+                  width = _GRID_SIZE * pond.width,
+                  height = _GRID_SIZE * pond.height,
+               }
+         })
+      )
+   end
+
+   self.collectibles = {}
+   for index, collectible in pairs(data.collectibles) do
+      local x = collectible.index * _GRID_SIZE
+      table.insert(
+         self.collectibles,
+         Collectible:new({
+               position = {
+                  x = x,
+                  y = self:_getHeightAtX(x) - 6,
+               },
+         })
+      )
+   end
+
+   self.doors = {}
+   for index, door in pairs(data.doors) do
+      table.insert(
+         self.doors,
+         Door:new({
+               position = {
+                  x = door.x,
+                  y = door.y,
+               }
+         })
+      )
+      if door.initial then
+         self.initialPlayerPosition = { x = door.x, y = door.y }
+      end
    end
 end
 
