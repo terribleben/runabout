@@ -16,7 +16,7 @@ local Collectible = {
 }
 
 -- TODO: unify proximity buffer or different per object?
-local _PROXIMITY_BUFFER = 128
+local _PROXIMITY_BUFFER = 96
 
 function Collectible:new(p)
    p = p or {}

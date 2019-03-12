@@ -13,7 +13,9 @@ local Level = {
    collectibles = {},
    numCollectibles = 0,
    numCollectiblesHeld = 0,
-   door = nil,
+   doors = {},
+   numDoors = 0,
+   initialPlayerPosition = {},
 
    Event = {
       NONE = 0,
@@ -32,9 +34,10 @@ function Level:reset()
       self.numSegments = self.numSegments + 1
       end--]]
    self.numCollectiblesHeld = 0
-   
-   self.numSegments = 15
-   self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 3, 3, 3, 3, 3 }
+
+   -- todo: mult levels
+   self.numSegments = 20
+   self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 2, 3, 3, 4 }
    self.size = {
       width = self.numSegments * _SEGMENT_HEIGHT,
       height = SharedState.viewport.height,
@@ -44,8 +47,8 @@ function Level:reset()
    self.ponds = {}
    self.ponds[self.numPonds] = Pond:new({
          position = {
-            x = 8 * _SEGMENT_HEIGHT,
-            y = self:getGroundBaseline() - _SEGMENT_HEIGHT * 2 + 12,
+            x = 16 * _SEGMENT_HEIGHT,
+            y = self:getGroundBaseline() - _SEGMENT_HEIGHT * 3 + 12,
          },
          size = {
             width = _SEGMENT_HEIGHT * 2,
@@ -55,7 +58,7 @@ function Level:reset()
 
    self.numCollectibles = 1
    self.collectibles = {}
-   local collectibleX = 11.5 * _SEGMENT_HEIGHT
+   local collectibleX = 13.5 * _SEGMENT_HEIGHT
    self.collectibles[self.numCollectibles] = Collectible:new({
          position = {
             x = collectibleX,
@@ -63,12 +66,20 @@ function Level:reset()
          },
    })
 
-   self.door = Door:new({
+   self.numDoors = 2
+   self.doors[1] = Door:new({
          position = {
             x = 175,
             y = 150,
          },
    })
+   self.doors[2] = Door:new({
+         position = {
+            x = 575,
+            y = 175,
+         },
+   })
+   self.initialPlayerPosition = self.doors[1].position
 end
 
 function Level:update(dt)
@@ -101,16 +112,19 @@ function Level:interactWith(craft)
          self.collectibles[index] = nil
          self.numCollectiblesHeld = self.numCollectiblesHeld + 1
          if self.numCollectiblesHeld == self.numCollectibles then
-            self.door.isOpen = true
+            -- todo: mult levels
+            self.doors[2].isOpen = true
          end
       end
    end
 
    -- door
-   local result = self.door:interactWith(craft)
-   if result == Door.Event.ENTER then
-      -- todo: transition level
-      return self.Event.PLAYER_DEATH
+   for index, door in pairs(self.doors) do
+      local result = door:interactWith(craft)
+      if result == Door.Event.ENTER then
+         -- todo: transition level
+         return self.Event.PLAYER_DEATH
+      end
    end
 
    return self.Event.NONE
@@ -134,7 +148,9 @@ function Level:draw()
    for index, collectible in pairs(self.collectibles) do
       collectible:draw()
    end
-   self.door:draw()
+   for index, door in pairs(self.doors) do
+      door:draw()
+   end
    Craft:draw()
    self:_drawSegments()
    love.graphics.pop()

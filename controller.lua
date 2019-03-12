@@ -9,8 +9,8 @@ function Controller:reset()
    Level:reset()
    Craft:reset()
    Craft.position = {
-      x = Level.door.position.x,
-      y = Level.door.position.y,
+      x = Level.initialPlayerPosition.x,
+      y = Level.initialPlayerPosition.y,
    }
 end
 
