@@ -25,6 +25,12 @@ end
 function Controller:update(dt)
    Craft:update(dt)
    Level:update(dt)
+   if Craft.position.x > Level.size.width then
+      Craft.position.x = Level.size.width
+   end
+   if Craft.position.x < 0 then
+      Craft.position.x = 0
+   end
    Camera:update(Level, Craft.position, dt)
    local event = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
