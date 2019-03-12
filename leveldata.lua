@@ -95,7 +95,14 @@ local LevelData = {
                x = -150,
                y = 100,
                destination = 1,
-            }
+            },
+            {
+               x = 440,
+               y = 260,
+               isOpen = true,
+               color = 1,
+               destination = 4,
+            },
          },
          ponds = {
             {
@@ -108,6 +115,24 @@ local LevelData = {
                width = 2,
                height = 1,
             },
+         },
+      },
+
+      -- level 4
+      {
+         id = 4,
+         segments = { 1, 1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1 },
+         ponds = {
+            {
+               index = 3,
+               width = 7,
+               height = 2,
+            },
+         },
+         collectibles = {},
+         doors = {
+            { x = 425, y = 380, initial = true, },
+            { x = 780, y = 425, destination = 3, isOpen = true },
          },
       },
    },

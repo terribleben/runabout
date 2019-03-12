@@ -5,10 +5,15 @@ local Door = {
    radius = 24,
    isOpen = false,
    destination = 1,
+   color = nil,
 
    Event = {
       NONE = 0,
       ENTER = 1,
+   },
+   Colors = {
+      NONE = 0,
+      BLUE = 1,
    },
 }
 
@@ -26,7 +31,11 @@ function Door:draw()
    love.graphics.rotate(time * 6)
    love.graphics.circle('line', 0, 0, self.radius, 3)
    if self.isOpen then
-      love.graphics.setColor(1, 1, 1, 1)
+      if self.color == self.Colors.BLUE then
+         love.graphics.setColor(122 / 255, 243 / 255, 236 / 255, 1)
+      else
+         love.graphics.setColor(1, 1, 1, 1)
+      end
       love.graphics.rotate(time * 0.5)
       love.graphics.circle('line', 0, 0, self.radius * 0.8, 3)
    else

@@ -247,8 +247,9 @@ function Level:loadLevelData(data)
 
    self.doors = {}
    for index, door in pairs(data.doors) do
-      local doorX
+      local doorX, isOpen = 0, false
       if door.x > 0 then doorX = door.x else doorX = self.size.width + door.x end
+      if door.isOpen then isOpen = true end
       table.insert(
          self.doors,
          Door:new({
@@ -257,6 +258,8 @@ function Level:loadLevelData(data)
                   y = door.y,
                },
                destination = door.destination,
+               isOpen = door.isOpen,
+               color = door.color,
          })
       )
       if door.initial then
