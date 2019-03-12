@@ -184,7 +184,10 @@ end
 function Level:_onPlayerCollect()
    if self.levelId == 1 then
       if self.numCollectiblesHeld == 1 then
-         -- todo: mult levels
+         self.doors[2].isOpen = true
+      end
+   elseif self.levelId == 2 then
+      if self.numCollectiblesHeld == 3 then
          self.doors[2].isOpen = true
       end
    end
@@ -237,11 +240,13 @@ function Level:loadLevelData(data)
 
    self.doors = {}
    for index, door in pairs(data.doors) do
+      local doorX
+      if door.x > 0 then doorX = door.x else doorX = self.size.width + door.x end
       table.insert(
          self.doors,
          Door:new({
                position = {
-                  x = door.x,
+                  x = doorX,
                   y = door.y,
                },
                destination = door.destination,

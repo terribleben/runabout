@@ -51,7 +51,7 @@ function Craft:update(dt)
          self.state = self.states.PLAYING
          self.velocity.y = -5
       end
-      self.fuel = self.fuel - 0.1 * dt
+      self.fuel = self.fuel - 0.15 * dt
       if self.fuel < 0 then self.fuel = 0 end
    end
    if love.keyboard.isDown('left') then
