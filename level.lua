@@ -205,7 +205,7 @@ function Level:loadLevelData(data)
       table.insert(self.segments, segment)
       if segment > maxSegment then maxSegment = segment end
    end
-   local maxHeight = (SharedState.viewport.height - self:getGroundBaseline()) + (_GRID_SIZE * maxSegment)
+   local maxHeight = (SharedState.viewport.height - self:getGroundBaseline()) + (_GRID_SIZE * maxSegment) + 200
    
    self.size = {
       width = (table.getn(self.segments) - 1) * _GRID_SIZE,
