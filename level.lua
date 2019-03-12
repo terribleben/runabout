@@ -187,6 +187,10 @@ function Level:_onPlayerCollect()
          self.doors[2].isOpen = true
       end
    elseif self.levelId == 2 then
+      if self.numCollectiblesHeld == 5 then
+         self.doors[2].isOpen = true
+      end
+   elseif self.levelId == 3 then
       if self.numCollectiblesHeld == 3 then
          self.doors[2].isOpen = true
       end
@@ -196,13 +200,16 @@ end
 function Level:loadLevelData(data)
    self.levelId = data.id
    self.segments = {}
+   local maxSegment = 0
    for index, segment in pairs(data.segments) do
       table.insert(self.segments, segment)
+      if segment > maxSegment then maxSegment = segment end
    end
+   local maxHeight = (SharedState.viewport.height - self:getGroundBaseline()) + (_GRID_SIZE * maxSegment)
    
    self.size = {
       width = (table.getn(self.segments) - 1) * _GRID_SIZE,
-      height = SharedState.viewport.height,
+      height = math.max(SharedState.viewport.height, maxHeight),
    }
 
    self.ponds = {}
