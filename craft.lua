@@ -1,3 +1,5 @@
+local SharedState = require 'sharedstate'
+
 local Craft = {
    position = { x = 0, y = 0 },
    velocity = { x = 0, y = 0 },
@@ -62,6 +64,9 @@ function Craft:update(dt)
       self.velocity.x = self.velocity.x * 0.8
    end
    if self.state == self.states.PLAYING then
+      if SharedState.environment.windy then
+         acceleration.x = acceleration.x - 6
+      end
       self.velocity.x = self.velocity.x + acceleration.x
       self.velocity.y = self.velocity.y + acceleration.y
       if self.velocity.y > maxVelocity.y then self.velocity.y = maxVelocity.y end

@@ -194,11 +194,22 @@ function Level:_onPlayerCollect()
       if self.numCollectiblesHeld == 3 then
          self.doors[2].isOpen = true
       end
+   elseif self.levelId == 5 then
+      if self.numCollectiblesHeld == 6 then
+         self.doors[2].isOpen = true
+      end
    end
 end
 
 function Level:loadLevelData(data)
    self.levelId = data.id
+
+   if data.windy then
+      SharedState:setEnvironment({ windy = true })
+   else
+      SharedState:setEnvironment({ windy = false })
+   end
+   
    self.segments = {}
    local maxSegment = 0
    for index, segment in pairs(data.segments) do
@@ -233,13 +244,20 @@ function Level:loadLevelData(data)
 
    self.collectibles = {}
    for index, collectible in pairs(data.collectibles) do
-      local x = collectible.index * _GRID_SIZE
+      local x, y
+      if collectible.index then
+         x = collectible.index * _GRID_SIZE
+         y = self:_getHeightAtX(x) - 6
+         if collectible.hover then
+            y = y - collectible.hover
+         end
+      end
       table.insert(
          self.collectibles,
          Collectible:new({
                position = {
                   x = x,
-                  y = self:_getHeightAtX(x) - 6,
+                  y = y,
                },
          })
       )

@@ -1,6 +1,9 @@
 local SharedState = {
    screen = { width = 0, height = 0 },
    viewport = { x = 0, y = 0, width = 0, height = 0 },
+   environment = {
+      windy = false,
+   },
 }
 
 function SharedState:reset()
@@ -15,6 +18,11 @@ function SharedState:_reset()
    self.viewport.height = math.min(600, self.screen.height)
    self.viewport.x = self.viewport.width * -0.5
    self.viewport.y = self.viewport.height * -0.5
+   self.environment = { windy = false }
+end
+
+function SharedState:setEnvironment(environment)
+   self.environment = environment
 end
 
 return SharedState
