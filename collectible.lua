@@ -11,7 +11,7 @@ local Collectible = {
    Event = {
       NONE = 0,
       PROXIMATE = 1,
-      PLAYER_COLLECT = 2,
+      COLLECT = 2,
    },
 }
 
@@ -57,7 +57,7 @@ function Collectible:interactWith(craft)
    local targetAngle = craft.angle + math.pi * 0.5
    local isProximate = false
    if self:_intersects(craft.position.x, craft.position.y) then
-      return self.Event.PLAYER_COLLECT
+      return self.Event.COLLECT
    elseif self:_isProximate(craft.position.x, craft.position.y, targetAngle) then
       self.isCollecting = true
       isProximate = true

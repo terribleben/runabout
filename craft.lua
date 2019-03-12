@@ -4,13 +4,18 @@ local Craft = {
    radius = 24,
    angle = 0,
    fuel = 1,
-   isActive = false
+   state = 0,
+
+   states = {
+      READY = 0,
+      PLAYING = 1,
+   },
 }
 
 local maxVelocity = { x = 175, y = 250 }
 
 function Craft:reset()
-   self.isActive = false
+   self.state = self.states.READY
    self.fuel = 1
 end
 
@@ -18,9 +23,9 @@ function Craft:draw()
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
    love.graphics.rotate(self.angle)
-   if self.isActive then
+   if self.state == self.states.PLAYING then
       love.graphics.setColor(1, 1, 1, 1)
-   else
+   elseif self.state == self.states.READY then
       if math.floor(love.timer.getTime() * 6) % 2 == 1 then
          love.graphics.setColor(1, 1, 1, 1)
       else
@@ -42,8 +47,8 @@ function Craft:update(dt)
    self.angle = 0
    if love.keyboard.isDown('down') and self.fuel > 0 then
       acceleration.y = acceleration.y - 25
-      if not self.isActive then
-         self.isActive = true
+      if self.state ~= self.states.PLAYING then
+         self.state = self.states.PLAYING
          self.velocity.y = -5
       end
       self.fuel = self.fuel - 0.1 * dt
@@ -56,7 +61,7 @@ function Craft:update(dt)
    else
       self.velocity.x = self.velocity.x * 0.8
    end
-   if self.isActive then
+   if self.state == self.states.PLAYING then
       self.velocity.x = self.velocity.x + acceleration.x
       self.velocity.y = self.velocity.y + acceleration.y
       if self.velocity.y > maxVelocity.y then self.velocity.y = maxVelocity.y end

@@ -2,7 +2,6 @@ local Camera = require 'camera'
 local Craft = require 'craft'
 local Collectible = require 'collectible'
 local Door = require 'door'
-local LevelData = require 'leveldata'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
@@ -18,8 +17,9 @@ local Level = {
 
    Event = {
       NONE = 0,
-      PLAYER_COLLECT = 1,
+      COLLECT = 1,
       PLAYER_DEATH = 2,
+      ENTER_DOOR = 3,
    },
 }
 
@@ -30,11 +30,6 @@ function Level:reset()
       self.segments[index] = math.random(0, 3)
       end--]]
    self.numCollectiblesHeld = 0
-
-   -- todo: mult levels
-   local levelToLoad = LevelData.levels[1];
-   self:_loadLevelData(levelToLoad)
-   self.levelId = 1
 end
 
 function Level:update(dt)
@@ -63,11 +58,11 @@ function Level:interactWith(craft)
    -- collectibles
    for index, collectible in pairs(self.collectibles) do
       local result = collectible:interactWith(craft)
-      if result == Collectible.Event.PLAYER_COLLECT then
+      if result == Collectible.Event.COLLECT then
          self.collectibles[index] = nil
          self.numCollectiblesHeld = self.numCollectiblesHeld + 1
          self:_onPlayerCollect()
-         return self.Event.PLAYER_COLLECT
+         return self.Event.COLLECT
       end
    end
 
@@ -75,8 +70,7 @@ function Level:interactWith(craft)
    for index, door in pairs(self.doors) do
       local result = door:interactWith(craft)
       if result == Door.Event.ENTER then
-         -- todo: transition level
-         return self.Event.PLAYER_DEATH
+         return self.Event.ENTER_DOOR, door
       end
    end
 
@@ -196,7 +190,8 @@ function Level:_onPlayerCollect()
    end
 end
 
-function Level:_loadLevelData(data)
+function Level:loadLevelData(data)
+   self.levelId = data.id
    self.segments = {}
    for index, segment in pairs(data.segments) do
       table.insert(self.segments, segment)
@@ -248,7 +243,8 @@ function Level:_loadLevelData(data)
                position = {
                   x = door.x,
                   y = door.y,
-               }
+               },
+               destination = door.destination,
          })
       )
       if door.initial then

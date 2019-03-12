@@ -4,6 +4,7 @@ local Door = {
    position = { x = 0, y = 0 },
    radius = 24,
    isOpen = false,
+   destination = 1,
 
    Event = {
       NONE = 0,

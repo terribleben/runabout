@@ -1,17 +1,13 @@
 local Camera = require 'camera'
 local Craft = require 'craft'
 local Level = require 'level'
+local LevelData = require 'leveldata'
 
 local Controller = {
 }
 
 function Controller:reset()
-   Level:reset()
-   Craft:reset()
-   Craft.position = {
-      x = Level.initialPlayerPosition.x,
-      y = Level.initialPlayerPosition.y,
-   }
+   self:_loadLevel(1)
 end
 
 function Controller:draw()
@@ -32,10 +28,23 @@ function Controller:update(dt)
       Craft.position.x = 0
    end
    Camera:update(Level, Craft.position, dt)
-   local event = Level:interactWith(Craft)
+   local event, data = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
       self:reset()
+   elseif event == Level.Event.ENTER_DOOR then
+      self:_loadLevel(data.destination)
    end
+end
+
+function Controller:_loadLevel(levelId)
+   Level:reset()
+   local levelToLoad = LevelData.levels[levelId];
+   Level:loadLevelData(levelToLoad)
+   Craft:reset()
+   Craft.position = {
+      x = Level.initialPlayerPosition.x,
+      y = Level.initialPlayerPosition.y,
+   }
 end
 
 return Controller
