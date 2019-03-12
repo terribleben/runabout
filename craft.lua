@@ -28,11 +28,6 @@ function Craft:draw()
       end
       love.graphics.print("ready", -16, 32)
    end
-   --[[love.graphics.rectangle(
-      'line',
-         -self.radius * 0.5, -self.radius * 0.5,
-      self.radius, self.radius
-      )--]]
    love.graphics.polygon(
       'fill',
       -self.radius * 0.55, -self.radius * 0.48,

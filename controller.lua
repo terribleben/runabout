@@ -1,3 +1,4 @@
+local Camera = require 'camera'
 local Craft = require 'craft'
 local Level = require 'level'
 
@@ -15,7 +16,6 @@ end
 
 function Controller:draw()
    Level:drawBackground()
-   Craft:draw()
    Level:draw()
    love.graphics.setColor(227 / 255, 87 / 255, 91 / 255, 1)
    love.graphics.rectangle('line', 12, 12, 128, 12)
@@ -25,6 +25,7 @@ end
 function Controller:update(dt)
    Craft:update(dt)
    Level:update(dt)
+   Camera:update(Level, Craft.position, dt)
    local event = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
       self:reset()

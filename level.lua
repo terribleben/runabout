@@ -1,3 +1,5 @@
+local Camera = require 'camera'
+local Craft = require 'craft'
 local Collectible = require 'collectible'
 local Door = require 'door'
 local Pond = require 'pond'
@@ -18,6 +20,8 @@ local Level = {
       PLAYER_COLLECT = 1,
       PLAYER_DEATH = 2,
    },
+
+   size = { width = 0, height = 0 }
 }
 
 local _SEGMENT_HEIGHT = 64
@@ -31,6 +35,10 @@ function Level:reset()
    
    self.numSegments = 15
    self.segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 1, 2, 3, 3, 3, 3, 3 }
+   self.size = {
+      width = self.numSegments * _SEGMENT_HEIGHT,
+      height = SharedState.viewport.height,
+   }
 
    self.numPonds = 1
    self.ponds = {}
@@ -118,20 +126,22 @@ function Level:getGroundBaseline()
 end
 
 function Level:draw()
-   self:_drawSegments()
-end
-
-function Level:drawBackground()
-   self:_drawSky()
+   love.graphics.push()
+   love.graphics.translate(-Camera.position.x, -Camera.position.y)
    for index, pond in pairs(self.ponds) do
       pond:draw()
    end
    for index, collectible in pairs(self.collectibles) do
       collectible:draw()
    end
-
    self.door:draw()
-   
+   Craft:draw()
+   self:_drawSegments()
+   love.graphics.pop()
+end
+
+function Level:drawBackground()
+   self:_drawSky()
 end
 
 function Level:_drawSegments()
