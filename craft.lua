@@ -51,7 +51,7 @@ function Craft:update(dt)
    local acceleration = { x = 0, y = 0 }
    acceleration.y = 15
    self.angle = 0
-   if love.keyboard.isDown('down') and self.fuel > 0 then
+   if love.keyboard.isDown('up') and self.fuel > 0 then
       acceleration.y = acceleration.y - 25
       if self.state ~= self.states.PLAYING then
          self.state = self.states.PLAYING
@@ -60,9 +60,9 @@ function Craft:update(dt)
       self.fuel = self.fuel - 0.15 * dt
       if self.fuel < 0 then self.fuel = 0 end
    end
-   if love.keyboard.isDown('left') then
+   if love.keyboard.isDown('right') then
       acceleration.x = 15
-   elseif love.keyboard.isDown('right') then
+   elseif love.keyboard.isDown('left') then
       acceleration.x = -15
    else
       self.velocity.x = self.velocity.x * 0.8
@@ -80,7 +80,7 @@ function Craft:update(dt)
       self.position.x = self.position.x + self.velocity.x * dt
       self.position.y = self.position.y + self.velocity.y * dt
       self.angle = self.velocity.x * 0.002
-      self.thruster:update(dt, love.keyboard.isDown('down'))
+      self.thruster:update(dt, love.keyboard.isDown('up'))
    end
 end
 
