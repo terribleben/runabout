@@ -4,7 +4,7 @@ local Level = require 'level'
 local LevelData = require 'leveldata'
 
 local Controller = {
-   _currentLevelId = 5,
+   _currentLevelId = 1,
 }
 
 function Controller:reset()
