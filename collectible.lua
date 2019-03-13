@@ -2,7 +2,6 @@ local Geom = require 'geom'
 
 local Collectible = {
    position = { x = 0, y = 0 },
-   velocity = { x = 0, y = 0 },
    radius = 12,
    isCollecting = false,
    targetPosition = nil,
@@ -40,16 +39,18 @@ end
 function Collectible:update(dt)
    if self.isCollecting then
       local distanceToTarget = Geom.distance2(self.position, self.targetPosition)
-      local accelerationMag = 0.2 + (1.0 - (distanceToTarget / _PROXIMITY_BUFFER)) * 0.7
-      self._accelerationMag = math.max(accelerationMag, self._accelerationMag)
-      local acceleration = {
+      self._accelerationMag = math.min(50, self._accelerationMag + 50 * dt)
+      local velocity = {
          x = (self.targetPosition.x - self.position.x) * self._accelerationMag,
          y = (self.targetPosition.y - self.position.y) * self._accelerationMag,
       }
-      self.velocity.x = self.velocity.x + acceleration.x
-      self.velocity.y = self.velocity.y + acceleration.y
-      self.position.x = self.position.x + self.velocity.x * dt
-      self.position.y = self.position.y + self.velocity.y * dt
+      if Geom.magnitude(velocity) * dt >= distanceToTarget then
+         self.position.x = self.targetPosition.x
+         self.position.y = self.targetPosition.y
+      else
+         self.position.x = self.position.x + velocity.x * dt
+         self.position.y = self.position.y + velocity.y * dt
+      end
    end
 end
 
