@@ -62,8 +62,7 @@ function Level:interactWith(craft)
       local result = collectible:interactWith(craft)
       if result == Collectible.Event.COLLECT then
          self.collectibles[index] = nil
-         self.numCollectiblesHeld = self.numCollectiblesHeld + 1
-         self:_onPlayerCollect()
+         self:_onPlayerCollect(collectible)
          return self.Event.COLLECT
       end
    end
@@ -193,7 +192,14 @@ function Level:_drawBackgroundLayer()
    self:_drawSegments(self.backgroundSegments, 0, self:getGroundBaseline() - 32, _GRID_SIZE * 0.8)
 end
 
-function Level:_onPlayerCollect()
+function Level:_onPlayerCollect(collectible)
+   if collectible.shape == Collectible.Shapes.BORING then
+      self.numCollectiblesHeld = self.numCollectiblesHeld + 1
+   elseif collectible.shape == Collectible.Shapes.SPECIAL then
+      SharedState.boost = 1
+   elseif collectible.shape == Collectible.Shapes.UPGRADE then
+      SharedState.isBoostEnabled = true
+   end
    if self.levelId == 1 then
       if self.numCollectiblesHeld == 1 then
          self.doors[2].isOpen = true
@@ -214,6 +220,8 @@ function Level:_onPlayerCollect()
       if self.numCollectiblesHeld == 2 then
          self.doors[2].isOpen = true
       end
+   elseif self.levelId == 7 then
+      self.doors[1].isOpen = true
    end
 end
 
@@ -266,13 +274,18 @@ function Level:loadLevelData(data)
 
    self.collectibles = {}
    for index, collectible in pairs(data.collectibles) do
-      local x, y
+      local x, y, shape
       if collectible.index then
          x = collectible.index * _GRID_SIZE
          y = self:_getHeightAtX(x) - 6
          if collectible.hover then
             y = y - collectible.hover
          end
+      end
+      if collectible.shape then
+         shape = collectible.shape
+      else
+         shape = Collectible.Shapes.BORING
       end
       table.insert(
          self.collectibles,
@@ -281,6 +294,7 @@ function Level:loadLevelData(data)
                   x = x,
                   y = y,
                },
+               shape = shape,
          })
       )
    end

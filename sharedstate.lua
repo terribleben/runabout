@@ -4,6 +4,8 @@ local SharedState = {
    environment = {
       windy = false,
    },
+   isBoostEnabled = false,
+   boost = 0,
 }
 
 function SharedState:reset()
@@ -19,6 +21,8 @@ function SharedState:_reset()
    self.viewport.x = self.viewport.width * -0.5
    self.viewport.y = self.viewport.height * -0.5
    self.environment = { windy = false }
+   self.isBoostEnabled = false
+   self.boost = 0
 end
 
 function SharedState:setEnvironment(environment)

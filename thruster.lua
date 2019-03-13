@@ -1,3 +1,5 @@
+local SharedState = require 'sharedstate'
+
 local Thruster = {
    _particles = {},
 }
@@ -26,7 +28,11 @@ end
 function Thruster:draw()
    for index = 1, _PARTICLE_COUNT do
       local p = self._particles[index]
-      love.graphics.setColor(1, 1, 1, math.min(1, -p.vy / 400))
+      if SharedState.boost > 0 then
+         love.graphics.setColor(0, 1, 1, math.min(1, -p.vy / 400))
+      else
+         love.graphics.setColor(1, 1, 1, math.min(1, -p.vy / 400))
+      end
       love.graphics.circle('fill', p.x, p.y, 1.5 + p.mass)
    end
 end

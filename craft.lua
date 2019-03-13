@@ -28,6 +28,7 @@ function Craft:draw()
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
    love.graphics.rotate(self.angle)
+   self.thruster:draw()
    if self.state == self.states.PLAYING then
       love.graphics.setColor(1, 1, 1, 1)
    elseif self.state == self.states.READY then
@@ -43,7 +44,6 @@ function Craft:draw()
          -self.radius * 0.5, -self.radius * 0.5,
       self.radius, self.radius
    )
-   self.thruster:draw()
    love.graphics.pop()
 end
 
@@ -52,13 +52,19 @@ function Craft:update(dt)
    acceleration.y = 15
    self.angle = 0
    if love.keyboard.isDown('up') and self.fuel > 0 then
-      acceleration.y = acceleration.y - 25
+      if SharedState.boost > 0 then
+         acceleration.y = acceleration.y - 30
+         SharedState.boost = SharedState.boost - 0.2 * dt
+         if SharedState.boost < 0 then SharedState.boost = 0 end
+      else
+         acceleration.y = acceleration.y - 25
+         self.fuel = self.fuel - 0.15 * dt
+         if self.fuel < 0 then self.fuel = 0 end
+      end
       if self.state ~= self.states.PLAYING then
          self.state = self.states.PLAYING
          self.velocity.y = -5
       end
-      self.fuel = self.fuel - 0.15 * dt
-      if self.fuel < 0 then self.fuel = 0 end
    end
    if love.keyboard.isDown('right') then
       acceleration.x = 15

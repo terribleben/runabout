@@ -1,4 +1,5 @@
 local Geom = require 'geom'
+local SharedState = require 'sharedstate'
 
 local Collectible = {
    position = { x = 0, y = 0 },
@@ -6,11 +7,18 @@ local Collectible = {
    isCollecting = false,
    targetPosition = nil,
    _accelerationMag = 0,
+   shape = 0,
 
    Event = {
       NONE = 0,
       PROXIMATE = 1,
       COLLECT = 2,
+   },
+
+   Shapes = {
+      BORING = 0,
+      SPECIAL = 1,
+      UPGRADE = 2,
    },
 }
 
@@ -26,13 +34,35 @@ end
 function Collectible:draw()
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
-   love.graphics.setColor(1, 0, 1, 1)
-   love.graphics.rectangle(
-      'fill',
-      self.radius * -0.5,
-      self.radius * -0.5,
-      self.radius, self.radius
-   )
+   if self.shape == self.Shapes.BORING then
+      love.graphics.setColor(1, 0, 1, 1)
+      love.graphics.rectangle(
+         'fill',
+         self.radius * -0.5,
+         self.radius * -0.5,
+         self.radius, self.radius
+      )
+   elseif self.shape == self.Shapes.SPECIAL then
+      if SharedState.isBoostEnabled then
+         love.graphics.setColor(0, 1, 1, 1)
+      else
+         love.graphics.setColor(0.6, 0.6, 0.6, 1)
+      end
+      love.graphics.circle(
+         'fill',
+         0, 0, self.radius * 0.75
+      )
+   elseif self.shape == self.Shapes.UPGRADE then
+      if math.floor(love.timer.getTime() * 6) % 2 == 1 then
+         love.graphics.setColor(0, 1, 1, 1)
+      else
+         love.graphics.setColor(1, 1, 1, 1)
+      end
+      love.graphics.circle(
+         'fill',
+         0, 0, self.radius * 0.9
+      )
+   end
    love.graphics.pop()
 end
 
@@ -57,6 +87,10 @@ end
 function Collectible:interactWith(craft)
    local targetAngle = craft.angle + math.pi * 0.5
    local isProximate = false
+   if self.shape == self.Shapes.SPECIAL and not SharedState.isBoostEnabled then
+      -- no boost ability, do not pick up
+      return self.Event.NONE
+   end
    if self:_intersects(craft.position.x, craft.position.y) then
       return self.Event.COLLECT
    elseif self:_isProximate(craft.position.x, craft.position.y, targetAngle) then

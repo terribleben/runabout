@@ -185,8 +185,30 @@ local LevelData = {
             { index = 18, },
          },
          doors = {
-            { x = 125, y = 500, initial = true },
-            { x = -80, y = 350, destination = 1 },
+            { x = 125, y = 500, initial = true, destination = 5 },
+            { x = -80, y = 350, destination = 7 },
+         },
+      },
+
+      -- room 7
+      {
+         id = 7,
+         windy = true,
+         segments = {
+            0, 0, 0, 0, 0, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         },
+         ponds = {},
+         collectibles = {
+            { index = 15, shape = 1, hover = 16 },
+            { index = 6, shape = 2, hover = 16 },
+         },
+         doors = {
+            { x = 1600, y = 100, initial = true, destination = 6 },
+         },
+         background = {
+            0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 0, 0, 0, 0,
+            1, 1, 2, 3, 3, 3, 3, 2, 2, 1, 0, 0, 0, 0, 0,
+            1, 1, 2, 2,
          },
       },
    },
