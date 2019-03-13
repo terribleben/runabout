@@ -1,21 +1,17 @@
+local _DEFAULT_BACKGROUND = {
+   0, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 1, 2, 3, 3, 3, 3, 2, 2, 3, 4, 4, 4, 4, 3, 2, 2,
+}
+
 local LevelData = {
-   numLevels = 1,
+   DefaultBackground = _DEFAULT_BACKGROUND,
    levels = {
       -- level 1
       {
          id = 1,
          segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 2, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 2, 3, 3, 4 },
          ponds = {
-            {
-               index = 9,
-               width = 4,
-               height = 1,
-            },
-            {
-               index = 19,
-               width = 2,
-               height = 1,
-            },
+            { index = 9, width = 4, height = 1, },
+            { index = 19, width = 2, height = 1, },
          },
          collectibles = {
             { index = 16.5 },
@@ -67,6 +63,11 @@ local LevelData = {
                destination = 3,
             },
          },
+         background = {
+            0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1,
+            2, 2, 3, 3, 4, 5, 5, 4, 4, 3, 2, 2, 2,
+            2, 3, 4, 4, 5, 6, 6, 5, 5, 5, 4, 4,
+         }
       },
 
       -- level 3
@@ -79,7 +80,10 @@ local LevelData = {
             2, 2, 3, 3, 3, 3, 3, 3, 2, 2, 3, 3, 4, 3, 3, 3,
             4, 4, 5,
          },
-         ponds = {},
+         ponds = {
+            { index = 1, width = 3, height = 1, },
+            { index = 25, width = 2, height = 1, },
+         },
          collectibles = {
             { index = 17 },
             { index = 31.5 },
@@ -104,17 +108,11 @@ local LevelData = {
                destination = 4,
             },
          },
-         ponds = {
-            {
-               index = 1,
-               width = 3,
-               height = 1,
-            },
-            {
-               index = 25,
-               width = 2,
-               height = 1,
-            },
+         background = {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 2, 2, 2, 3, 3, 3, 2, 1, 1, 0, 0,
+            1, 2, 2, 2, 1, 0, 0, 1, 1, 2, 2, 3, 3, 3, 3,
+            3, 3, 3, 4, 4, 5, 5, 4, 3, 3, 4, 4, 4, 4, 3, 3, 3
          },
       },
 
@@ -133,6 +131,9 @@ local LevelData = {
          doors = {
             { x = 425, y = 380, initial = true, },
             { x = 780, y = 425, destination = 3, isOpen = true },
+         },
+         background = {
+            3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1
          },
       },
 

@@ -2,6 +2,7 @@ local Camera = require 'camera'
 local Craft = require 'craft'
 local Collectible = require 'collectible'
 local Door = require 'door'
+local LevelData = require 'leveldata'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
@@ -11,6 +12,7 @@ local Level = {
    collectibles = {},
    doors = {},
    size = { width = 0, height = 0 },
+   backgroundSegments = {},
    
    numCollectiblesHeld = 0,
    initialPlayerPosition = {},
@@ -99,30 +101,34 @@ function Level:draw()
       door:draw()
    end
    Craft:draw()
-   self:_drawSegments()
+   love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
+   self:_drawSegments(self.segments, 0, self:getGroundBaseline(), _GRID_SIZE)
    love.graphics.pop()
 end
 
 function Level:drawBackground()
    self:_drawSky()
+   love.graphics.push()
+   love.graphics.translate(-Camera.position.x * 0.85, -Camera.position.y * 0.9)
+   self:_drawBackgroundLayer()
+   love.graphics.pop()
 end
 
-function Level:_drawSegments()
-   love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
+function Level:_drawSegments(segments, xStart, yStart, gridSize)
    local prevHeight
-   local xx, yy = 0, self:getGroundBaseline()
-   for index, height in pairs(self.segments) do
+   local xx, yy = xStart, yStart
+   for index, height in pairs(segments) do
       if prevHeight then
          love.graphics.polygon(
             'fill',
-            xx - _GRID_SIZE, yy - prevHeight * _GRID_SIZE,
-            xx, yy - height * _GRID_SIZE,
+            xx - gridSize, yy - prevHeight * gridSize,
+            xx, yy - height * gridSize,
             xx, SharedState.viewport.height,
-            xx - _GRID_SIZE, SharedState.viewport.height
+            xx - gridSize, SharedState.viewport.height
          )
       end
       prevHeight = height
-      xx = xx + _GRID_SIZE
+      xx = xx + gridSize
    end
 end
 
@@ -181,6 +187,12 @@ function Level:_drawSky()
    end
 end
 
+function Level:_drawBackgroundLayer()
+   -- love.graphics.setColor(207 / 255, 168 / 255, 99 / 255, 1)
+   love.graphics.setColor(194 / 255, 162 / 255, 97 / 255, 0.8)
+   self:_drawSegments(self.backgroundSegments, 0, self:getGroundBaseline() - 32, _GRID_SIZE * 0.8)
+end
+
 function Level:_onPlayerCollect()
    if self.levelId == 1 then
       if self.numCollectiblesHeld == 1 then
@@ -212,6 +224,12 @@ function Level:loadLevelData(data)
       SharedState:setEnvironment({ windy = true })
    else
       SharedState:setEnvironment({ windy = false })
+   end
+
+   if data.background then
+      self.backgroundSegments = data.background
+   else
+      self.backgroundSegments = LevelData.DefaultBackground
    end
    
    self.segments = {}
