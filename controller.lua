@@ -6,10 +6,11 @@ local SharedState = require 'sharedstate'
 
 local Controller = {
    _currentLevelId = 1,
+   _currentInitialDoorIndex = 1,
 }
 
 function Controller:reset()
-   self:_loadLevel(self._currentLevelId)
+   self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
 end
 
 function Controller:draw()
@@ -37,17 +38,19 @@ function Controller:update(dt)
    Camera:update(Level, Craft.position, dt)
    local event, data = Level:interactWith(Craft)
    if event == Level.Event.PLAYER_DEATH then
-      self:_loadLevel(self._currentLevelId)
+      self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
    elseif event == Level.Event.ENTER_DOOR then
-      self:_loadLevel(data.destination)
+      self:_loadLevel(data.destination.levelId, data.destination.door)
    end
 end
 
-function Controller:_loadLevel(levelId)
+function Controller:_loadLevel(levelId, doorIndex)
    Level:reset()
+   SharedState.boost = 0
    local levelToLoad = LevelData.levels[levelId];
-   Level:loadLevelData(levelToLoad)
+   Level:loadLevelData(levelToLoad, doorIndex)
    self._currentLevelId = levelId
+   self._currentInitialDoorIndex = doorIndex
    Craft:reset()
    Craft.position = {
       x = Level.initialPlayerPosition.x,

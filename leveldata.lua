@@ -20,12 +20,11 @@ local LevelData = {
             {
                x = 175,
                y = 150,
-               initial = true,
             },
             {
                x = 825,
                y = 175,
-               destination = 2,
+               destination = { levelId = 2 },
             },
          },
       },
@@ -55,12 +54,11 @@ local LevelData = {
             {
                x = 1350,
                y = 250,
-               initial = true,
             },
             {
                x = 1350,
                y = 100,
-               destination = 3,
+               destination = { levelId = 3 },
             },
          },
          background = {
@@ -90,22 +88,14 @@ local LevelData = {
             { index = 50 },
          },
          doors = {
-            {
-               x = 700,
-               y = 100,
-               initial = true,
-            },
-            {
-               x = -150,
-               y = 100,
-               destination = 5,
-            },
+            { x = 700, y = 100, },
+            { x = -150, y = 100, destination = { levelId = 5 }, },
             {
                x = 440,
                y = 260,
                isOpen = true,
                color = 1,
-               destination = 4,
+               destination = { levelId = 4 },
             },
          },
          background = {
@@ -119,18 +109,25 @@ local LevelData = {
       -- level 4
       {
          id = 4,
-         segments = { 1, 1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1 },
+         segments = {
+            2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3,
+            3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 1, 1, 2, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 1,
+         },
          ponds = {
             {
-               index = 3,
+               index = 46,
                width = 7,
                height = 2,
             },
          },
-         collectibles = {},
+         collectibles = {
+            { index = 44, shape = 1 },
+         },
          doors = {
-            { x = 425, y = 380, initial = true, },
-            { x = 780, y = 425, destination = 3, isOpen = true },
+            { x = -475, y = 380 },
+            { x = -100, y = 425, destination = { levelId = 3 }, isOpen = true },
          },
          background = {
             3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1
@@ -156,14 +153,15 @@ local LevelData = {
          collectibles = {
             { index = 9.5, hover = 16 },
             { index = 12, },
+            { index = 13.5, shape = 1 },
             { index = 16.5, hover = 100 },
             { index = 24, },
             { index = 30.5, },
             { index = 33.5, },
          },
          doors = {
-            { x = 200, y = 200, initial = true },
-            { x = -475, y = 425, destination = 6 },
+            { x = 200, y = 200, destination = { levelId = 3, door = 2 }, color = 1 },
+            { x = -475, y = 425, destination = { levelId = 6 } },
          },
       },
 
@@ -183,10 +181,11 @@ local LevelData = {
          collectibles = {
             { index = 11.75 },
             { index = 18, },
+            { index = 17.25, shape = 1 },
          },
          doors = {
-            { x = 125, y = 500, initial = true, destination = 5 },
-            { x = -80, y = 350, destination = 7 },
+            { x = 125, y = 500, destination = { levelId = 5, door = 2 }, color = 1 },
+            { x = -80, y = 350, destination = { levelId = 7 } },
          },
       },
 
@@ -203,7 +202,7 @@ local LevelData = {
             { index = 6, shape = 2, hover = 16 },
          },
          doors = {
-            { x = 1600, y = 100, initial = true, destination = 6 },
+            { x = 1600, y = 100, destination = { levelId = 6, door = 2 }, color = 1 },
          },
          background = {
             0, 0, 0, 0, 0, 1, 1, 2, 2, 1, 1, 0, 0, 0, 0,

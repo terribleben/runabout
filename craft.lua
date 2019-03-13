@@ -51,7 +51,7 @@ function Craft:update(dt)
    local acceleration = { x = 0, y = 0 }
    acceleration.y = 15
    self.angle = 0
-   if love.keyboard.isDown('up') and self.fuel > 0 then
+   if love.keyboard.isDown('up') and (self.fuel > 0 or SharedState.boost > 0) then
       if SharedState.boost > 0 then
          acceleration.y = acceleration.y - 30
          SharedState.boost = SharedState.boost - 0.2 * dt

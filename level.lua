@@ -216,17 +216,24 @@ function Level:_onPlayerCollect(collectible)
       if self.numCollectiblesHeld == 6 then
          self.doors[2].isOpen = true
       end
+      if collectible.shape == Collectible.Shapes.SPECIAL then
+         self.doors[1].isOpen = true
+      end
    elseif self.levelId == 6 then
       if self.numCollectiblesHeld == 2 then
          self.doors[2].isOpen = true
+      end
+      if collectible.shape == Collectible.Shapes.SPECIAL then
+         self.doors[1].isOpen = true
       end
    elseif self.levelId == 7 then
       self.doors[1].isOpen = true
    end
 end
 
-function Level:loadLevelData(data)
+function Level:loadLevelData(data, initialDoorIndex)
    self.levelId = data.id
+   initialDoorIndex = initialDoorIndex or 1
 
    if data.windy then
       SharedState:setEnvironment({ windy = true })
@@ -287,16 +294,19 @@ function Level:loadLevelData(data)
       else
          shape = Collectible.Shapes.BORING
       end
-      table.insert(
-         self.collectibles,
-         Collectible:new({
-               position = {
-                  x = x,
-                  y = y,
-               },
-               shape = shape,
-         })
-      )
+      local isCollected = (shape == Collectible.Shapes.BORING and SharedState.isBoostEnabled)
+      if not isCollected then
+         table.insert(
+            self.collectibles,
+            Collectible:new({
+                  position = {
+                     x = x,
+                     y = y,
+                  },
+                  shape = shape,
+            })
+         )
+      end
    end
 
    self.doors = {}
@@ -316,8 +326,8 @@ function Level:loadLevelData(data)
                color = door.color,
          })
       )
-      if door.initial then
-         self.initialPlayerPosition = { x = door.x, y = door.y }
+      if index == initialDoorIndex then
+         self.initialPlayerPosition = { x = doorX, y = door.y }
       end
    end
 end
