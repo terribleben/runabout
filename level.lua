@@ -4,6 +4,7 @@ local Collectible = require 'collectible'
 local Door = require 'door'
 local Goal = require 'goal'
 local LevelData = require 'leveldata'
+local Particles = require 'particles'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
 
@@ -44,6 +45,12 @@ function Level:update(dt)
    for index, collectible in pairs(self.collectibles) do
       collectible:update(dt)
    end
+   if SharedState.environment.windy then
+      if math.random() < 0.2 then
+         Particles:wind()
+      end
+   end
+   Particles:update(dt)
 end
 
 function Level:interactWith(craft)
@@ -116,7 +123,9 @@ function Level:draw()
    Craft:draw()
    love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
    self:_drawSegments(self.segments, 0, self:getGroundBaseline(), _GRID_SIZE)
+   Particles:draw()
    love.graphics.pop()
+   Particles:drawForeground()
 end
 
 function Level:drawBackground()
