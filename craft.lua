@@ -1,4 +1,5 @@
 local SharedState = require 'sharedstate'
+local Thruster = require 'thruster'
 
 local Craft = {
    position = { x = 0, y = 0 },
@@ -7,6 +8,7 @@ local Craft = {
    angle = 0,
    fuel = 1,
    state = 0,
+   thruster = nil,
 
    states = {
       READY = 0,
@@ -19,6 +21,7 @@ local maxVelocity = { x = 175, y = 250 }
 function Craft:reset()
    self.state = self.states.READY
    self.fuel = 1
+   self.thruster = Thruster:new()
 end
 
 function Craft:draw()
@@ -40,6 +43,7 @@ function Craft:draw()
          -self.radius * 0.5, -self.radius * 0.5,
       self.radius, self.radius
    )
+   self.thruster:draw()
    love.graphics.pop()
 end
 
@@ -76,6 +80,7 @@ function Craft:update(dt)
       self.position.x = self.position.x + self.velocity.x * dt
       self.position.y = self.position.y + self.velocity.y * dt
       self.angle = self.velocity.x * 0.002
+      self.thruster:update(dt, love.keyboard.isDown('down'))
    end
 end
 
