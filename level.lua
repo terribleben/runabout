@@ -198,6 +198,10 @@ function Level:_onPlayerCollect()
       if self.numCollectiblesHeld == 6 then
          self.doors[2].isOpen = true
       end
+   elseif self.levelId == 6 then
+      if self.numCollectiblesHeld == 2 then
+         self.doors[2].isOpen = true
+      end
    end
 end
 

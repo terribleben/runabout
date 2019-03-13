@@ -65,7 +65,7 @@ function Craft:update(dt)
    end
    if self.state == self.states.PLAYING then
       if SharedState.environment.windy then
-         acceleration.x = acceleration.x - 6
+         acceleration.x = acceleration.x - 6.5
       end
       self.velocity.x = self.velocity.x + acceleration.x
       self.velocity.y = self.velocity.y + acceleration.y
