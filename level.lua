@@ -134,6 +134,9 @@ function Level:draw()
    Particles:draw()
    love.graphics.pop()
    Particles:drawForeground()
+   if self.goal then
+      self.goal:drawForeground()
+   end
 end
 
 function Level:drawBackground()

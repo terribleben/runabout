@@ -160,8 +160,10 @@ function Goal:_drawCutscene()
       radius, radius
    )
    love.graphics.pop()
+end
 
-   if self._animation.stage == 3 then
+function Goal:drawForeground()
+   if self._isAnimating and self._animation.stage == 3 then
       local alpha = 1.0 - (self._animation.timer / 4)
       love.graphics.setColor(1, 1, 1, alpha)
       love.graphics.rectangle('fill', 0, 0, SharedState.viewport.width, SharedState.viewport.height)
