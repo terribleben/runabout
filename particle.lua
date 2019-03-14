@@ -24,6 +24,49 @@ function Particle:draw(dt)
    end
 end
 
+-- CraftParticle
+
+local CraftParticle = {
+   x = 0,
+   y = 0,
+   vx = 0,
+   vy = 0,
+   radius = 0,
+   ttl = 0,
+   lifespan = 0
+}
+
+function CraftParticle:new(p)
+   p = p or {}
+   setmetatable(p, { __index = self })
+   p.ttl = p.lifespan
+
+   p.x = p.x + math.random(-12, 12)
+   p.y = p.y + math.random(-12, 12)
+
+   local angle = math.random() * math.pi * 2
+   local magnitude = math.random(250, 500)
+   p.vx = magnitude * math.cos(angle)
+   p.vy = magnitude * math.sin(angle)
+   
+   return p
+end
+
+function CraftParticle:update(dt)
+   self.ttl = self.ttl - dt
+   self.x = self.x + self.vx * dt
+   self.y = self.y + self.vy * dt
+   self.vx = self.vx * 0.98
+   self.vy = self.vy * 0.98
+end
+
+function CraftParticle:draw(dt)
+   if self.ttl > 0 then
+      love.graphics.setColor(1, 1, 1, (self.ttl / self.lifespan))
+      love.graphics.circle('fill', self.x, self.y, self.radius)
+   end
+end
+
 -- DoorParticle
 
 local DoorParticle = {
@@ -39,7 +82,7 @@ function DoorParticle:new(p)
    p = p or {}
    setmetatable(p, { __index = self })
    p.ttl = p.lifespan
-   p.vr = 75 + p.index * 50
+   p.vr = 150 + p.index * 25
    return p
 end
 
@@ -93,5 +136,5 @@ function WindParticle:draw(dt)
 end
 
 return function()
-   return Particle, WindParticle, DoorParticle
+   return Particle, WindParticle, DoorParticle, CraftParticle
 end

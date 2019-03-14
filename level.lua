@@ -21,6 +21,7 @@ local Level = {
    
    numCollectiblesHeld = 0,
    initialPlayerPosition = {},
+   restartTimer = 0,
 
    Event = {
       NONE = 0,
@@ -28,6 +29,7 @@ local Level = {
       PLAYER_DEATH = 2,
       ENTER_DOOR = 3,
       GAME_OVER = 4,
+      RESTART = 5,
    },
 }
 
@@ -55,12 +57,30 @@ function Level:update(dt)
    if self.goal then
       self.goal:update(dt)
    end
+   if self.restartTimer > 0 then
+      self.restartTimer = self.restartTimer - dt
+      if self.restartTimer <= 0 then
+         self.restartTimer = -1
+      end
+   end
    Particles:update(dt)
 end
 
 function Level:interactWith(craft)
+   -- death timer
+   if craft.state == craft.states.HIDDEN then
+      if self.restartTimer < 0 then
+         self.restartTimer = 0
+         return self.Event.RESTART
+      else
+         -- preclude other interaction
+         return self.Event.NONE
+      end
+   end
+
    -- terrain
    if self:collidesWith(craft.position.x, craft.position.y) then
+      self:_onPlayerDeath(craft)
       return self.Event.PLAYER_DEATH
    end
 
@@ -68,6 +88,7 @@ function Level:interactWith(craft)
    for index, pond in pairs(self.ponds) do
       local result = pond:interactWith(craft)
       if result == Pond.Event.PLAYER_DEATH then
+         self:_onPlayerDeath(craft)
          return self.Event.PLAYER_DEATH
       end
    end
@@ -114,8 +135,9 @@ function Level:getGroundBaseline()
 end
 
 function Level:draw()
+   local cameraPosition = Camera:getPosition()
    love.graphics.push()
-   love.graphics.translate(-Camera.position.x, -Camera.position.y)
+   love.graphics.translate(-cameraPosition.x, -cameraPosition.y)
    for index, pond in pairs(self.ponds) do
       pond:draw()
    end
@@ -140,9 +162,10 @@ function Level:draw()
 end
 
 function Level:drawBackground()
+   local cameraPosition = Camera:getPosition()
    self:drawSky()
    love.graphics.push()
-   love.graphics.translate(-Camera.position.x * 0.85, -Camera.position.y * 0.9)
+   love.graphics.translate(-cameraPosition.x * 0.85, -cameraPosition.y * 0.9)
    self:_drawBackgroundLayer()
    love.graphics.pop()
 end
@@ -220,6 +243,12 @@ end
 function Level:_drawBackgroundLayer()
    Colors.useColorInterpPalettes(self.palettes, Camera:getXInterp(), Colors.Value.BACKGROUND)
    self:_drawSegments(self.backgroundSegments, 0, self:getGroundBaseline() - 32, _GRID_SIZE * 0.8)
+end
+
+function Level:_onPlayerDeath(craft)
+   Particles:playerDeath(craft)
+   craft.state = craft.states.HIDDEN
+   self.restartTimer = 1
 end
 
 function Level:_onPlayerCollect(collectible)

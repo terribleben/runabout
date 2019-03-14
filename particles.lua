@@ -1,4 +1,4 @@
-local Particle, WindParticle, DoorParticle = require 'particle' ()
+local Particle, WindParticle, DoorParticle, CraftParticle = require 'particle' ()
 local SharedState = require 'sharedstate'
 
 local Particles = {
@@ -11,12 +11,14 @@ local Particles = {
 function Particles:add(count, Kind, proto, foreground)
    proto = proto or Kind:new()
    for index = 0, count - 1 do
-      proto.index = index
+      local clone = {}
+      for k, v in pairs(proto) do clone[k] = v end
+      clone.index = index
       if foreground then
-         self._foregroundParticles[self._nextForegroundParticleIndex] = Kind:new(proto)
+         self._foregroundParticles[self._nextForegroundParticleIndex] = Kind:new(clone)
          self._nextForegroundParticleIndex = self._nextForegroundParticleIndex + 1
       else
-         self._particles[self._nextParticleIndex] = Kind:new(proto)
+         self._particles[self._nextParticleIndex] = Kind:new(clone)
          self._nextParticleIndex = self._nextParticleIndex + 1
       end
    end
@@ -29,7 +31,6 @@ function Particles:draw()
 end
 
 function Particles:drawForeground()
---   print('draw, self fgprt is ' .. self._foregroundParticles)
    for index, particle in pairs(self._foregroundParticles) do
       particle:draw()
    end
@@ -58,6 +59,20 @@ function Particles:doorOpened(door)
          x = door.position.x,
          y = door.position.y,
          lifespan = 2,
+      },
+      false
+   )
+end
+
+function Particles:playerDeath(craft)
+   self:add(
+      10,
+      CraftParticle,
+      {
+         x = craft.position.x,
+         y = craft.position.y,
+         radius = 3,
+         lifespan = 0.5,
       },
       false
    )

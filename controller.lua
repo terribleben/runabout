@@ -64,6 +64,8 @@ function Controller:update(dt)
       Camera:update(Level, Craft.position, dt)
       local event, data = Level:interactWith(Craft)
       if event == Level.Event.PLAYER_DEATH then
+         Camera:shake()
+      elseif event == Level.Event.RESTART then
          self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
       elseif event == Level.Event.ENTER_DOOR then
          self:_loadLevel(data.destination.levelId, data.destination.door)
