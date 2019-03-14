@@ -44,6 +44,7 @@ function Controller:draw()
       love.graphics.rectangle('fill', 100, 100, SharedState.viewport.width - 200, SharedState.viewport.height - 200)
       love.graphics.setColor(0, 0, 0, 1)
       love.graphics.print('TODO: you win', 200, 200)
+      love.graphics.print('space to return to menu', 200, 248)
    end
 end
 

@@ -14,6 +14,7 @@ local Craft = {
    states = {
       READY = 0,
       PLAYING = 1,
+      HIDDEN = 2,
    },
 }
 
@@ -27,6 +28,8 @@ function Craft:reset()
 end
 
 function Craft:draw(palette)
+   if self.state == self.states.HIDDEN then return end
+
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
    love.graphics.rotate(self.angle)
@@ -57,6 +60,8 @@ function Craft:draw(palette)
 end
 
 function Craft:update(dt)
+   if self.state == self.states.HIDDEN then return end
+
    local acceleration = { x = 0, y = 0 }
    acceleration.y = 15
    self.angle = 0

@@ -52,6 +52,9 @@ function Level:update(dt)
          Particles:wind()
       end
    end
+   if self.goal then
+      self.goal:update(dt)
+   end
    Particles:update(dt)
 end
 
@@ -91,6 +94,9 @@ function Level:interactWith(craft)
    if self.goal then
       local result = self.goal:interactWith(craft)
       if result == Goal.Event.REACHED then
+         craft.state = craft.states.HIDDEN
+         Goal:animate(craft)
+      elseif result == Goal.Event.FINISHED then
          return self.Event.GAME_OVER
       end
    end
