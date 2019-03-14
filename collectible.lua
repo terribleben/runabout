@@ -2,12 +2,14 @@ local Geom = require 'geom'
 local SharedState = require 'sharedstate'
 
 local Collectible = {
-   position = { x = 0, y = 0 },
+   position = nil,
+   velocity = nil,
    radius = 12,
    isCollecting = false,
    targetPosition = nil,
    _accelerationMag = 0,
    shape = 0,
+   _initialPosition = nil,
 
    Event = {
       NONE = 0,
@@ -23,7 +25,7 @@ local Collectible = {
 }
 
 -- TODO: unify proximity buffer or different per object?
-local _PROXIMITY_BUFFER = 96
+local _PROXIMITY_BUFFER = 86
 
 function Collectible:new(p)
    p = p or {}
@@ -81,6 +83,13 @@ function Collectible:update(dt)
          self.position.x = self.position.x + velocity.x * dt
          self.position.y = self.position.y + velocity.y * dt
       end
+   else
+      if self._initialPosition == nil then
+         self._initialPosition = { y = self.position.y - 4 }
+         self.velocity = { y = 0 }
+      end
+      self.velocity.y = self.velocity.y + (self._initialPosition.y - self.position.y) * 0.4
+      self.position.y = self.position.y + self.velocity.y * dt
    end
 end
 
