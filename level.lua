@@ -2,6 +2,7 @@ local Camera = require 'camera'
 local Craft = require 'craft'
 local Collectible = require 'collectible'
 local Door = require 'door'
+local Goal = require 'goal'
 local LevelData = require 'leveldata'
 local Pond = require 'pond'
 local SharedState = require 'sharedstate'
@@ -13,6 +14,7 @@ local Level = {
    doors = {},
    size = { width = 0, height = 0 },
    backgroundSegments = {},
+   goal = nil,
    
    numCollectiblesHeld = 0,
    initialPlayerPosition = {},
@@ -22,6 +24,7 @@ local Level = {
       COLLECT = 1,
       PLAYER_DEATH = 2,
       ENTER_DOOR = 3,
+      GAME_OVER = 4,
    },
 }
 
@@ -75,6 +78,14 @@ function Level:interactWith(craft)
       end
    end
 
+   -- goal
+   if self.goal then
+      local result = self.goal:interactWith(craft)
+      if result == Goal.Event.REACHED then
+         return self.Event.GAME_OVER
+      end
+   end
+
    return self.Event.NONE
 end
 
@@ -98,6 +109,9 @@ function Level:draw()
    end
    for index, door in pairs(self.doors) do
       door:draw()
+   end
+   if self.goal then
+      self.goal:draw()
    end
    Craft:draw()
    love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
@@ -329,6 +343,20 @@ function Level:loadLevelData(data, initialDoorIndex)
       if index == initialDoorIndex then
          self.initialPlayerPosition = { x = doorX, y = door.y }
       end
+   end
+
+   if data.goal then
+      local x, y
+      x = data.goal.index * _GRID_SIZE
+      y = self:_getHeightAtX(x)
+      self.goal = Goal:new({
+            position = {
+               x = x,
+               y = y,
+            },
+      })
+   else
+      self.goal = nil
    end
 end
 
