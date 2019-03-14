@@ -49,6 +49,9 @@ end
 
 function Controller:update(dt)
    if self.state == self.States.PLAY then
+      if self._freeze == true then
+         return
+      end
       Craft:update(dt)
       Level:update(dt)
       if Craft.position.x > Level.size.width then
@@ -70,6 +73,10 @@ function Controller:update(dt)
 end
 
 function Controller:keypressed(key)
+   if key == 'j' then
+      self._freeze = true
+   end
+
    if self.state == self.States.PLAY then return end
 
    local timeSinceChange = love.timer.getTime() - self._stateLastChanged
