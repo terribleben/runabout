@@ -35,18 +35,19 @@ local LevelData = {
          segments = {
             2, 1, 1, 0, 1, 1, 1, 3, 3,
             7, 7, 7, 7, 7, 6, 7, 7, 5, 5,
-            3, 2, 2, 2, 3, 3, 3, 3, 3,
+            3, 2, 2, 2, 3, 3, 2, 3, 3,
             4, 4, 4, 4, 3, 3, 5,
          },
          ponds = {
             { index = 2, width = 2, height = 1, },
             { index = 13, width = 2, height = 1, },
+            { index = 24, width = 2, height = 1, },
             { index = 19, width = 4, height = 1, },
          },
          collectibles = {
             { index = 5, },
             { index = 12.5, },
-            { index = 25, },
+            { index = 25, hover = 48 },
             { index = 29, },
             { index = 30.5, },
          },
