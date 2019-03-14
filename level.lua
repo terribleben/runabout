@@ -1,6 +1,7 @@
 local Camera = require 'camera'
-local Craft = require 'craft'
 local Collectible = require 'collectible'
+local Colors = require 'colors'
+local Craft = require 'craft'
 local Door = require 'door'
 local Goal = require 'goal'
 local LevelData = require 'leveldata'
@@ -16,6 +17,7 @@ local Level = {
    size = { width = 0, height = 0 },
    backgroundSegments = {},
    goal = nil,
+   palette = Colors.Palette.START,
    
    numCollectiblesHeld = 0,
    initialPlayerPosition = {},
@@ -121,7 +123,7 @@ function Level:draw()
       self.goal:draw()
    end
    Craft:draw()
-   love.graphics.setColor(188 / 255, 129 / 255, 73 / 255, 1)
+   Colors.useColor(self.palette, Colors.Value.TERRAIN)
    self:_drawSegments(self.segments, 0, self:getGroundBaseline(), _GRID_SIZE)
    Particles:draw()
    love.graphics.pop()
@@ -194,13 +196,7 @@ function Level:_drawSky()
    local regionSize = SharedState.viewport.height / numRegions
    for i = 0, numRegions - 1 do
       local interp = i / (numRegions - 1)
-      local remain = 1.0 - interp
-      local color = {
-         r = ((color2.r * interp) + (color1.r * remain)) / 255.0,
-         g = ((color2.g * interp) + (color1.g * remain)) / 255.0,
-         b = ((color2.b * interp) + (color1.b * remain)) / 255.0,
-      }
-      love.graphics.setColor(color.r, color.g, color.b, 1)
+      Colors.interpColor(self.palette, Colors.Value.SKYTOP, Colors.Value.SKYBOTTOM, interp)
       love.graphics.rectangle(
          'fill',
          0, i * regionSize,
@@ -210,8 +206,7 @@ function Level:_drawSky()
 end
 
 function Level:_drawBackgroundLayer()
-   -- love.graphics.setColor(207 / 255, 168 / 255, 99 / 255, 1)
-   love.graphics.setColor(194 / 255, 162 / 255, 97 / 255, 0.8)
+   Colors.useColor(self.palette, Colors.Value.BACKGROUND)
    self:_drawSegments(self.backgroundSegments, 0, self:getGroundBaseline() - 32, _GRID_SIZE * 0.8)
 end
 
@@ -256,6 +251,7 @@ end
 
 function Level:loadLevelData(data, initialDoorIndex)
    self.levelId = data.id
+   self.palette = data.palette or Colors.Palette.START
    initialDoorIndex = initialDoorIndex or 1
 
    if data.windy then

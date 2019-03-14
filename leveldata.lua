@@ -1,3 +1,5 @@
+local Colors = require 'colors'
+
 local _DEFAULT_BACKGROUND = {
    0, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 1, 2, 3, 3, 3, 3, 2, 2, 3, 4, 4, 4, 4, 3, 2, 2,
 }
@@ -8,6 +10,7 @@ local LevelData = {
       -- level 1
       {
          id = 1,
+         palette = Colors.Palette.START,
          segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 2, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 2, 3, 3, 4 },
          ponds = {
             { index = 9, width = 4, height = 1, },
