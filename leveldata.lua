@@ -35,6 +35,7 @@ local LevelData = {
       -- level 2
       {
          id = 2,
+         palette = Colors.Palette.START,
          segments = {
             2, 1, 1, 0, 1, 1, 1, 3, 3,
             7, 7, 7, 7, 7, 6, 7, 7, 5, 5,
@@ -75,6 +76,7 @@ local LevelData = {
       -- level 3
       {
          id = 3,
+         palette = Colors.Palette.VENICE,
          segments = {
             4, 4, 3, 3, 4, 4,
             4, 4, 4, 3, 3, 3, 3, 2, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -113,6 +115,7 @@ local LevelData = {
       -- level 4
       {
          id = 4,
+         palette = Colors.Palette.VENICE,
          segments = {
             2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3,
             3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
