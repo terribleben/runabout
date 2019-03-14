@@ -147,6 +147,7 @@ local LevelData = {
       -- level 5
       {
          id = 5,
+         palette = Colors.Palette.MESA,
          windy = true,
          segments = {
             12, 11, 6,
@@ -173,11 +174,17 @@ local LevelData = {
             { x = 200, y = 200, destination = { levelId = 3, door = 2 }, color = 1 },
             { x = -475, y = 425, destination = { levelId = 6 } },
          },
+         background = {
+            7, 7, 6, 6, 6, 5, 5, 4, 4, 4, 4, 5, 5, 5, 4, 4, 3, 3, 3,
+            3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+         },
       },
 
       -- level 6
       {
          id = 6,
+         palette = Colors.Palette.MESA,
          windy = true,
          segments = {
             1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2, 3, 3, 4, 5, 5, 6,
