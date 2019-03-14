@@ -137,7 +137,8 @@ local LevelData = {
             { x = -100, y = 425, destination = { levelId = 3 }, isOpen = true },
          },
          background = {
-            3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
+            1, 1, 1, 1, 1, 1, 0, 0,
          },
          goal = {
             index = 7.5,
@@ -209,6 +210,7 @@ local LevelData = {
       -- room 7
       {
          id = 7,
+         palette = Colors.Palette.ORIGIN,
          windy = true,
          segments = {
             0, 0, 0, 0, 0, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
