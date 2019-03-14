@@ -10,7 +10,7 @@ local LevelData = {
       -- level 1
       {
          id = 1,
-         palette = Colors.Palette.START,
+         palettes = { Colors.Palette.START },
          segments = { 0, 0, 1, 1, 0, 0, 0, 1, 2, 2, 1, 1, 1, 2, 3, 3, 3, 3, 3, 3, 2, 3, 3, 4 },
          ponds = {
             { index = 9, width = 4, height = 1, },
@@ -35,7 +35,7 @@ local LevelData = {
       -- level 2
       {
          id = 2,
-         palette = Colors.Palette.START,
+         palette = { Colors.Palette.START },
          segments = {
             2, 1, 1, 0, 1, 1, 1, 3, 3,
             7, 7, 7, 7, 7, 6, 7, 7, 5, 5,
@@ -76,7 +76,7 @@ local LevelData = {
       -- level 3
       {
          id = 3,
-         palette = Colors.Palette.VENICE,
+         palettes = { Colors.Palette.VENICE },
          segments = {
             4, 4, 3, 3, 4, 4,
             4, 4, 4, 3, 3, 3, 3, 2, 1, 0, 0, 1, 0, 0, 0, 0,
@@ -112,10 +112,13 @@ local LevelData = {
          },
       },
 
-      -- level 4
+      -- room 4
       {
          id = 4,
-         palette = Colors.Palette.VENICE,
+         palettes = {
+            Colors.Palette.ORIGIN,
+            Colors.Palette.VENICE,
+         },
          segments = {
             2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3,
             3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -148,7 +151,7 @@ local LevelData = {
       -- level 5
       {
          id = 5,
-         palette = Colors.Palette.MESA,
+         palettes = { Colors.Palette.MESA },
          windy = true,
          segments = {
             12, 11, 6,
@@ -185,7 +188,7 @@ local LevelData = {
       -- level 6
       {
          id = 6,
-         palette = Colors.Palette.MESA,
+         palettes = { Colors.Palette.MESA },
          windy = true,
          segments = {
             1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 2, 3, 3, 4, 5, 5, 6,
@@ -210,7 +213,7 @@ local LevelData = {
       -- room 7
       {
          id = 7,
-         palette = Colors.Palette.ORIGIN,
+         palettes = { Colors.Palette.ORIGIN },
          windy = true,
          segments = {
             0, 0, 0, 0, 0, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

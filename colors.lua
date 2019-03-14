@@ -51,14 +51,50 @@ function Colors.getColor(palette, color)
    return chosenPalette[color]
 end
 
+function Colors.getColorInterpPalettes(palettes, interp, color)
+   -- TODO: more than 2
+   local numPalettes = table.getn(palettes)
+   if numPalettes == 1 then
+      return Colors.getColor(palettes[1], color)
+   else
+      local rgba1 = Colors.getColor(palettes[1], color)
+      local rgba2 = Colors.getColor(palettes[2], color)
+      local remain = 1.0 - interp
+      return {
+         (rgba2[1] * interp) + (rgba1[1] * remain),
+         (rgba2[2] * interp) + (rgba1[2] * remain),
+         (rgba2[3] * interp) + (rgba1[3] * remain),
+         (rgba2[4] * interp) + (rgba1[4] * remain),
+      }
+   end
+end
+
 function Colors.useColor(palette, color)
    local rgba = Colors.getColor(palette, color)
    love.graphics.setColor(rgba[1], rgba[2], rgba[3], rgba[4])
 end
 
-function Colors.interpColor(palette, color1, color2, interp)
+function Colors.useColorInterpPalettes(palettes, interp, color)
+   local rgba = Colors.getColorInterpPalettes(palettes, interp, color)
+   love.graphics.setColor(rgba[1], rgba[2], rgba[3], rgba[4])
+end
+
+function Colors.useInterpColor(palette, color1, color2, interp)
    local rgba1 = Colors.getColor(palette, color1)
    local rgba2 = Colors.getColor(palette, color2)
+   local remain = 1.0 - interp
+   local rgba = {
+      (rgba2[1] * interp) + (rgba1[1] * remain),
+      (rgba2[2] * interp) + (rgba1[2] * remain),
+      (rgba2[3] * interp) + (rgba1[3] * remain),
+      (rgba2[4] * interp) + (rgba1[4] * remain),
+   }
+   love.graphics.setColor(rgba[1], rgba[2], rgba[3], rgba[4])
+end
+
+function Colors.useInterpColorInterpPalettes(palettes, paletteInterp, color1, color2, interp)
+   local rgba1 = Colors.getColorInterpPalettes(palettes, paletteInterp, color1)
+   local rgba2 = Colors.getColorInterpPalettes(palettes, paletteInterp, color2)
    local remain = 1.0 - interp
    local rgba = {
       (rgba2[1] * interp) + (rgba1[1] * remain),

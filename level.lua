@@ -17,7 +17,7 @@ local Level = {
    size = { width = 0, height = 0 },
    backgroundSegments = {},
    goal = nil,
-   palette = Colors.Palette.START,
+   palettes = nil,
    
    numCollectiblesHeld = 0,
    initialPlayerPosition = {},
@@ -123,7 +123,7 @@ function Level:draw()
       self.goal:draw()
    end
    Craft:draw()
-   Colors.useColor(self.palette, Colors.Value.TERRAIN)
+   Colors.useColorInterpPalettes(self.palettes, Camera:getXInterp(), Colors.Value.TERRAIN)
    self:_drawSegments(self.segments, 0, self:getGroundBaseline(), _GRID_SIZE)
    Particles:draw()
    love.graphics.pop()
@@ -196,7 +196,10 @@ function Level:_drawSky()
    local regionSize = SharedState.viewport.height / numRegions
    for i = 0, numRegions - 1 do
       local interp = i / (numRegions - 1)
-      Colors.interpColor(self.palette, Colors.Value.SKYTOP, Colors.Value.SKYBOTTOM, interp)
+      Colors.useInterpColorInterpPalettes(
+         self.palettes, Camera:getXInterp(),
+         Colors.Value.SKYTOP, Colors.Value.SKYBOTTOM, interp
+      )
       love.graphics.rectangle(
          'fill',
          0, i * regionSize,
@@ -206,7 +209,7 @@ function Level:_drawSky()
 end
 
 function Level:_drawBackgroundLayer()
-   Colors.useColor(self.palette, Colors.Value.BACKGROUND)
+   Colors.useColorInterpPalettes(self.palettes, Camera:getXInterp(), Colors.Value.BACKGROUND)
    self:_drawSegments(self.backgroundSegments, 0, self:getGroundBaseline() - 32, _GRID_SIZE * 0.8)
 end
 
@@ -251,7 +254,7 @@ end
 
 function Level:loadLevelData(data, initialDoorIndex)
    self.levelId = data.id
-   self.palette = data.palette or Colors.Palette.START
+   self.palettes = data.palettes or { Colors.Palette.START }
    initialDoorIndex = initialDoorIndex or 1
 
    if data.windy then
