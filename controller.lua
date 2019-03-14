@@ -83,7 +83,7 @@ function Controller:keypressed(key)
    if timeSinceChange > 0.5 and key == 'space' then
       if self.state == self.States.INIT then
          self:_setState(self.States.PLAY)
-         self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
+         self:_loadLevel(1, 1)
       elseif self.state == self.States.END then
          self:_setState(self.States.INIT)
          SharedState:reset()

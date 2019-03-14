@@ -1,4 +1,4 @@
-local Particle, WindParticle = require 'particle' ()
+local Particle, WindParticle, DoorParticle = require 'particle' ()
 local SharedState = require 'sharedstate'
 
 local Particles = {
@@ -11,6 +11,7 @@ local Particles = {
 function Particles:add(count, Kind, proto, foreground)
    proto = proto or Kind:new()
    for index = 0, count - 1 do
+      proto.index = index
       if foreground then
          self._foregroundParticles[self._nextForegroundParticleIndex] = Kind:new(proto)
          self._nextForegroundParticleIndex = self._nextForegroundParticleIndex + 1
@@ -47,6 +48,19 @@ function Particles:update(dt)
          self._foregroundParticles[index] = nil
       end
    end
+end
+
+function Particles:doorOpened(door)
+   self:add(
+      3,
+      DoorParticle,
+      {
+         x = door.position.x,
+         y = door.position.y,
+         lifespan = 2,
+      },
+      false
+   )
 end
 
 function Particles:wind()

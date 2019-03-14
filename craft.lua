@@ -1,3 +1,4 @@
+local Colors = require 'colors'
 local SharedState = require 'sharedstate'
 local Thruster = require 'thruster'
 
@@ -17,6 +18,7 @@ local Craft = {
 }
 
 local maxVelocity = { x = 175, y = 250 }
+local _READY = 'ready'
 
 function Craft:reset()
    self.state = self.states.READY
@@ -24,7 +26,7 @@ function Craft:reset()
    self.thruster = Thruster:new()
 end
 
-function Craft:draw()
+function Craft:draw(palette)
    love.graphics.push()
    love.graphics.translate(self.position.x, self.position.y)
    love.graphics.rotate(self.angle)
@@ -35,9 +37,16 @@ function Craft:draw()
       if math.floor(love.timer.getTime() * 6) % 2 == 1 then
          love.graphics.setColor(1, 1, 1, 1)
       else
-         love.graphics.setColor(216 / 255, 149 / 255, 110 / 255, 1)
+         Colors.useColor(palette, Colors.Value.DOOR)
       end
-      love.graphics.print("ready", -16, 32)
+      local mediumFont = SharedState.font.medium
+      love.graphics.setFont(mediumFont)
+      local titleWidth = mediumFont:getWidth(_READY)
+      love.graphics.print(
+         _READY,
+         titleWidth * -0.5,
+         32 + (-mediumFont:getHeight() * 0.5)
+      )
    end
    love.graphics.rectangle(
       'fill',

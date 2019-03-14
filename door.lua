@@ -1,4 +1,6 @@
+local Colors = require 'colors'
 local Geom = require 'geom'
+local Particles = require 'particles'
 
 local Door = {
    position = { x = 0, y = 0 },
@@ -23,12 +25,13 @@ function Door:new(p)
    return p
 end
 
-function Door:draw()
-   love.graphics.push()
+function Door:draw(palette)
+   love.graphics.push('all')
    love.graphics.translate(self.position.x, self.position.y)
-   love.graphics.setColor(216 / 255, 149 / 255, 110 / 255, 1)
+   Colors.useColor(palette, Colors.Value.DOOR)
    local time = love.timer.getTime()
    love.graphics.rotate(time * 6)
+   love.graphics.setLineWidth(2)
    love.graphics.circle('line', 0, 0, self.radius, 3)
    if self.isOpen then
       if self.color == self.Colors.BLUE then
@@ -41,6 +44,11 @@ function Door:draw()
    else
    end
    love.graphics.pop()
+end
+
+function Door:open()
+   self.isOpen = true
+   Particles:doorOpened(self)
 end
 
 function Door:interactWith(craft)

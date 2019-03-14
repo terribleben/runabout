@@ -117,12 +117,12 @@ function Level:draw()
       collectible:draw()
    end
    for index, door in pairs(self.doors) do
-      door:draw()
+      door:draw(self.palettes[1])
    end
    if self.goal then
       self.goal:draw()
    end
-   Craft:draw()
+   Craft:draw(self.palettes[1])
    Colors.useColorInterpPalettes(self.palettes, Camera:getXInterp(), Colors.Value.TERRAIN)
    self:_drawSegments(self.segments, 0, self:getGroundBaseline(), _GRID_SIZE)
    Particles:draw()
@@ -223,32 +223,32 @@ function Level:_onPlayerCollect(collectible)
    end
    if self.levelId == 1 then
       if self.numCollectiblesHeld == 1 then
-         self.doors[2].isOpen = true
+         self.doors[2]:open()
       end
    elseif self.levelId == 2 then
       if self.numCollectiblesHeld == 5 then
-         self.doors[2].isOpen = true
+         self.doors[2]:open()
       end
    elseif self.levelId == 3 then
       if self.numCollectiblesHeld == 3 then
-         self.doors[2].isOpen = true
+         self.doors[2]:open()
       end
    elseif self.levelId == 5 then
       if self.numCollectiblesHeld == 6 then
-         self.doors[2].isOpen = true
+         self.doors[2]:open()
       end
       if collectible.shape == Collectible.Shapes.SPECIAL then
-         self.doors[1].isOpen = true
+         self.doors[1]:open()
       end
    elseif self.levelId == 6 then
       if self.numCollectiblesHeld == 2 then
-         self.doors[2].isOpen = true
+         self.doors[2]:open()
       end
       if collectible.shape == Collectible.Shapes.SPECIAL then
-         self.doors[1].isOpen = true
+         self.doors[1]:open()
       end
    elseif self.levelId == 7 then
-      self.doors[1].isOpen = true
+      self.doors[1]:open()
    end
 end
 
