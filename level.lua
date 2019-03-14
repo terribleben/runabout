@@ -131,7 +131,7 @@ function Level:draw()
 end
 
 function Level:drawBackground()
-   self:_drawSky()
+   self:drawSky()
    love.graphics.push()
    love.graphics.translate(-Camera.position.x * 0.85, -Camera.position.y * 0.9)
    self:_drawBackgroundLayer()
@@ -189,7 +189,7 @@ function Level:_drawCollisionTest(collidingX)
    love.graphics.circle('line', collidingX, collideY, 10)
 end
 
-function Level:_drawSky()
+function Level:drawSky()
    local color1 = { r = 87, g = 136, b = 98 }
    local color2 = { r = 227, g = 207, b = 126 }
    local numRegions = 12

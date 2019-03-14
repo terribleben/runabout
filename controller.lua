@@ -2,10 +2,12 @@ local Camera = require 'camera'
 local Craft = require 'craft'
 local Level = require 'level'
 local LevelData = require 'leveldata'
+local Menu = require 'menu'
 local SharedState = require 'sharedstate'
 
 local Controller = {
    state = 1,
+   _stateLastChanged = 0,
    
    _currentLevelId = 1,
    _currentInitialDoorIndex = 1,
@@ -18,12 +20,14 @@ local Controller = {
 }
 
 function Controller:reset()
-   self.state = self.States.PLAY
+   self:_setState(self.States.INIT)
    self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
 end
 
 function Controller:draw()
-   if self.state == self.States.PLAY then
+   if self.state == self.States.INIT then
+      Menu:draw()
+   elseif self.state == self.States.PLAY then
       Level:drawBackground()
       Level:draw()
       love.graphics.setColor(227 / 255, 87 / 255, 91 / 255, 1)
@@ -60,9 +64,29 @@ function Controller:update(dt)
       elseif event == Level.Event.ENTER_DOOR then
          self:_loadLevel(data.destination.levelId, data.destination.door)
       elseif event == Level.Event.GAME_OVER then
-         self.state = self.States.END
+         self:_setState(self.States.END)
       end
    end
+end
+
+function Controller:keypressed(key)
+   if self.state == self.States.PLAY then return end
+
+   local timeSinceChange = love.timer.getTime() - self._stateLastChanged
+   if timeSinceChange > 0.5 and key == 'space' then
+      if self.state == self.States.INIT then
+         self:_setState(self.States.PLAY)
+         self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
+      elseif self.state == self.States.END then
+         self:_setState(self.States.INIT)
+         SharedState:reset()
+      end
+   end
+end
+
+function Controller:_setState(state)
+   self.state = state
+   self._stateLastChanged = love.timer.getTime()
 end
 
 function Controller:_loadLevel(levelId, doorIndex)

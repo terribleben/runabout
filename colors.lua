@@ -6,6 +6,7 @@ local Colors = {
       ORIGIN = 4,
    },
    Value = {
+      TEXT = 'TEXT',
       TERRAIN = 'TERRAIN',
       BACKGROUND = 'BACKGROUND',
       SKYTOP = 'SKYTOP',
@@ -20,6 +21,7 @@ local values = {
       ['BACKGROUND'] = { 194 / 255, 162 / 255, 97 / 255, 0.8 },
       ['SKYTOP'] = { 87 / 255, 136 / 255, 98 / 255, 1 },
       ['SKYBOTTOM'] = { 227 / 255, 207 / 255, 126 / 255, 1 },
+      ['TEXT'] = { 176 / 255, 65 / 255, 89 / 255, 1 },
    },
    {
       --['TERRAIN'] = { 195 / 255, 117 / 255, 96 / 255, 1 },

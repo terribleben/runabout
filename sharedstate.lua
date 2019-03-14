@@ -6,6 +6,7 @@ local SharedState = {
    },
    isBoostEnabled = false,
    boost = 0,
+   font = {},
 }
 
 function SharedState:reset()

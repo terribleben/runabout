@@ -4,6 +4,7 @@ local SharedState = require 'sharedstate'
 G_VIEWPORT_BUFFER = 800
 
 function love.load()
+   _loadFont()
    _reset()
 end
 
@@ -54,4 +55,20 @@ function _drawViewportBorder()
       -G_VIEWPORT_BUFFER, SharedState.viewport.height,
       SharedState.viewport.width + 2.0 * G_VIEWPORT_BUFFER, G_VIEWPORT_BUFFER
    )
+end
+
+function love.keypressed(...)
+   Controller:keypressed(...)
+end
+
+function _loadFont()
+   SharedState.font = {}
+   local fontSizes = {
+      small = 16,
+      medium = 24,
+      big = 72,
+   }
+   for name, size in pairs(fontSizes) do
+      SharedState.font[name] = love.graphics.newFont("x14y24pxHeadUpDaisy.ttf", size)
+   end
 end
