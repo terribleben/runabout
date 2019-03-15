@@ -67,6 +67,17 @@ function Level:update(dt)
 end
 
 function Level:interactWith(craft)
+   -- goal
+   if self.goal then
+      local result = self.goal:interactWith(craft)
+      if result == Goal.Event.REACHED then
+         craft.state = craft.states.HIDDEN
+         Goal:animate(craft)
+      elseif result == Goal.Event.FINISHED then
+         return self.Event.GAME_OVER
+      end
+   end
+
    -- death timer
    if craft.state == craft.states.HIDDEN then
       if self.restartTimer < 0 then
@@ -108,17 +119,6 @@ function Level:interactWith(craft)
       local result = door:interactWith(craft)
       if result == Door.Event.ENTER then
          return self.Event.ENTER_DOOR, door
-      end
-   end
-
-   -- goal
-   if self.goal then
-      local result = self.goal:interactWith(craft)
-      if result == Goal.Event.REACHED then
-         craft.state = craft.states.HIDDEN
-         Goal:animate(craft)
-      elseif result == Goal.Event.FINISHED then
-         return self.Event.GAME_OVER
       end
    end
 
