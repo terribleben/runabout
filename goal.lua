@@ -1,6 +1,8 @@
+local Camera = require 'camera'
 local Colors = require 'colors'
 local Craft = require 'craft'
 local Geom = require 'geom'
+local Particles = require 'particles'
 local SharedState = require 'sharedstate'
 
 local Goal = {
@@ -13,6 +15,7 @@ local Goal = {
    _animation = {
       craftPosition = nil,
       craftAngle = nil,
+      craftLight = false,
       timer = 0,
       stage = 0,
       frameTimer = 0,
@@ -72,10 +75,10 @@ function Goal:draw()
       self.size.width * 0.5, self.size.height * -0.65,
       self.size.width * 0.5, self.size.height * -0.35
    )
-   if self._isAnimating then
+   if self._isAnimating and self._animation.stage < 2 then
       love.graphics.setColor(0, 1, 1, 0.3)
-      for index, x in pairs(self._animation.bolts) do
-         love.graphics.rectangle('fill', x, -self.size.height, 10, self.size.height)
+      for index, bolt in pairs(self._animation.bolts) do
+         love.graphics.rectangle('fill', bolt.x, -self.size.height, bolt.w, self.size.height)
       end
    end
    love.graphics.pop()
@@ -90,7 +93,7 @@ function Goal:update(dt)
       self._animation.timer = self._animation.timer - dt
       self._animation.frameTimer = self._animation.frameTimer - dt
       if self._animation.frameTimer <= 0 then
-         self._animation.frameTimer = _FRAME_DUR
+         self._animation.frameTimer = 0.01 + math.random() * _FRAME_DUR
          self:_doFrame()
       end
       if self._animation.stage == 0 then
@@ -107,6 +110,10 @@ function Goal:update(dt)
             self._animation.timer = 3
             self._animation.craftPosition.x = self.position.x
             self._animation.craftPosition.y = self.position.y - self.size.height * 0.5
+            Camera:shake()
+            Particles:doorOpened(
+               { position = { x = self.position.x, y = self.position.y - self.size.height * 0.5 } }
+            )
          end
       elseif self._animation.stage == 2 then
          -- wait with player in center
@@ -153,7 +160,11 @@ function Goal:_drawCutscene()
    love.graphics.translate(self._animation.craftPosition.x, self._animation.craftPosition.y)
    local radius = 24
    love.graphics.rotate(self._animation.craftAngle)
-   love.graphics.setColor(1, 1, 1, 1)
+   if self._animation.craftLight and self._animation.stage < 2 then
+      love.graphics.setColor(0, 1, 1, 0.7)
+   else
+      love.graphics.setColor(1, 1, 1, 1)
+   end
    love.graphics.rectangle(
       'fill',
          -radius * 0.5, -radius * 0.5,
@@ -171,11 +182,15 @@ function Goal:drawForeground()
 end
 
 function Goal:_doFrame()
+   self._animation.craftLight = (math.random() < 0.4)
    self._animation.bolts = {}
    for i = 1, 3 do
       table.insert(
          self._animation.bolts,
-         (self.size.width * -0.5) + math.random() * (self.size.width - 10)
+         {
+            x = (self.size.width * -0.5) + math.random() * (self.size.width - 10),
+            w = math.random(1, 10),
+         }
       )
    end
 end
