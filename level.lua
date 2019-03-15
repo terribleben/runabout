@@ -258,13 +258,14 @@ function Level:_onPlayerCollect(collectible)
       SharedState.boost = 1
    elseif collectible.shape == Collectible.Shapes.UPGRADE then
       SharedState.isBoostEnabled = true
+      Particles:doorOpened(collectible)
    end
    if self.levelId == 1 then
       if self.numCollectiblesHeld == 1 then
          self.doors[2]:open()
       end
    elseif self.levelId == 2 then
-      if self.numCollectiblesHeld == 5 then
+      if self.numCollectiblesHeld == 4 then
          self.doors[2]:open()
       end
    elseif self.levelId == 3 then

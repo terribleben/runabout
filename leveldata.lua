@@ -52,7 +52,6 @@ local LevelData = {
             { index = 5, },
             { index = 12.5, },
             { index = 25, hover = 48 },
-            { index = 29, },
             { index = 30.5, },
          },
          doors = {
@@ -163,7 +162,7 @@ local LevelData = {
          },
          ponds = {
             { index = 16, width = 2, height = 2 },
-            { index = 24.5, width = 2, height = 1 },
+            { index = 37, width = 2, height = 1 },
          },
          collectibles = {
             { index = 9.5, hover = 16 },
