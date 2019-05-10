@@ -4,3 +4,5 @@ title: Runabout
 description: A short journey
 owner: ben
 coverImage: screen/cover.png
+dimensions: 800x600
+scaling: off
