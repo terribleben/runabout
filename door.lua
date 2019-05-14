@@ -17,6 +17,7 @@ local Door = {
       NONE = 0,
       BLUE = 1,
    },
+   _startTime = 0,
 }
 
 function Door:new(p)
@@ -26,10 +27,13 @@ function Door:new(p)
 end
 
 function Door:draw(palette)
+   if self._startTime == 0 then
+      self._startTime = love.timer.getTime()
+   end
    love.graphics.push('all')
    love.graphics.translate(self.position.x, self.position.y)
    Colors.useColor(palette, Colors.Value.DOOR)
-   local time = love.timer.getTime()
+   local time = love.timer.getTime() - self._startTime
    love.graphics.rotate(time * 6)
    love.graphics.setLineWidth(2)
    love.graphics.circle('line', 0, 0, self.radius, 3)
