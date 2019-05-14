@@ -87,7 +87,7 @@ function Controller:keypressed(key)
    if self.state == self.States.PLAY then return end
 
    local timeSinceChange = love.timer.getTime() - self._stateLastChanged
-   if timeSinceChange > 0.5 and key == 'space' then
+   if timeSinceChange > 1.0 and key == 'space' then
       if self.state == self.States.INIT then
          self:_setState(self.States.PLAY)
          SharedState.timer.started = love.timer.getTime()
