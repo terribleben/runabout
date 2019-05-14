@@ -1,4 +1,5 @@
 local Colors = require 'colors'
+local HiScore = require 'hiscore'
 local Level = require 'level'
 local SharedState = require 'sharedstate'
 
@@ -10,6 +11,7 @@ local _INSTRUCTIONS = {
    'left/right to turn',
 }
 local _START = 'space to start'
+local _HISCORE = 'best: '
 
 function Menu:draw()
    Level:drawSky()
@@ -50,6 +52,19 @@ function Menu:draw()
       (SharedState.viewport.width * 0.5) - (width * 0.5),
       SharedState.viewport.height - 78 + (-mediumFont:getHeight() * 0.5)
    )
+
+   -- best time
+   local bestTime = HiScore:get()
+   if bestTime > 0 then
+      local timeStr = _HISCORE .. HiScore:formatTime(bestTime)
+      local width = mediumFont:getWidth(timeStr)
+      Colors.useColor(Colors.Palette.START, Colors.Value.SKYTOP)
+      love.graphics.print(
+         timeStr,
+         (SharedState.viewport.width * 0.5) - (width * 0.5),
+         SharedState.viewport.height - 28 + (-mediumFont:getHeight() * 0.5)
+      )
+   end
 end
 
 return Menu
