@@ -7,6 +7,11 @@ local SharedState = {
    isBoostEnabled = false,
    boost = 0,
    font = {},
+   timer = {
+      started = 0,
+      finished = 0,
+      prevBest = 0, -- compare against this while playing
+   },
 }
 
 function SharedState:reset()
@@ -24,6 +29,11 @@ function SharedState:_reset()
    self.environment = { windy = false }
    self.isBoostEnabled = false
    self.boost = 0
+   self.timer = {
+      started = 0,
+      finished = 0,
+      prevBest = 0,
+   }
 end
 
 function SharedState:setEnvironment(environment)

@@ -1,6 +1,7 @@
 local Camera = require 'camera'
 local Colors = require 'colors'
 local Craft = require 'craft'
+local GameOver = require 'gameover'
 local HiScore = require 'hiscore'
 local Level = require 'level'
 local LevelData = require 'leveldata'
@@ -10,9 +11,6 @@ local SharedState = require 'sharedstate'
 local Controller = {
    state = 1,
    _stateLastChanged = 0,
-   _timeStarted = 0,
-   _timeFinished = 0,
-   _prevBestTime = 0, -- compare against this while running States.PLAY
    
    _currentLevelId = 1,
    _currentInitialDoorIndex = 1,
@@ -26,9 +24,6 @@ local Controller = {
 
 function Controller:reset()
    HiScore:load()
-   self._timeStarted = 0
-   self._timeFinished = 0
-   self._prevBestTime = 0
    self:_setState(self.States.INIT)
    self:_loadLevel(self._currentLevelId, self._currentInitialDoorIndex)
 end
@@ -49,17 +44,7 @@ function Controller:draw()
       end
       self:_maybeDrawTimer()
    elseif self.state == self.States.END then
-      Level:drawBackground()
-      love.graphics.setColor(1, 1, 1, 0.5)
-      love.graphics.rectangle('fill', 100, 100, SharedState.viewport.width - 200, SharedState.viewport.height - 200)
-      love.graphics.setColor(0, 0, 0, 1)
-      love.graphics.print('TODO: you win', 200, 200)
-      love.graphics.print(
-         'Time: ' .. HiScore:formatTime(self._timeFinished - self._timeStarted),
-         200,
-         248
-      )
-      love.graphics.print('space to return to menu', 200, 296)
+      GameOver:draw()
    end
 end
 
@@ -85,10 +70,12 @@ function Controller:update(dt)
       elseif event == Level.Event.ENTER_DOOR then
          self:_loadLevel(data.destination.levelId, data.destination.door)
       elseif event == Level.Event.GAME_OVER then
-         self._timeFinished = love.timer.getTime()
-         HiScore:maybeSave(self._timeFinished - self._timeStarted)
+         SharedState.timer.finished = love.timer.getTime()
+         HiScore:maybeSave(SharedState.timer.finished - SharedState.timer.started)
          self:_setState(self.States.END)
       end
+   elseif self.state == self.States.END then
+      GameOver:update(dt)
    end
 end
 
@@ -103,8 +90,8 @@ function Controller:keypressed(key)
    if timeSinceChange > 0.5 and key == 'space' then
       if self.state == self.States.INIT then
          self:_setState(self.States.PLAY)
-         self._timeStarted = love.timer.getTime()
-         self._prevBestTime = HiScore:get()
+         SharedState.timer.started = love.timer.getTime()
+         SharedState.timer.prevBest = HiScore:get()
          self:_loadLevel(1, 1)
       elseif self.state == self.States.END then
          self:_setState(self.States.INIT)
@@ -134,10 +121,10 @@ function Controller:_loadLevel(levelId, doorIndex)
 end
 
 function Controller:_maybeDrawTimer()
-   if self._prevBestTime > 0 then
-      local currentTime = love.timer.getTime() - self._timeStarted
-      if currentTime > self._prevBestTime then
-         local timerStr = '+ ' .. HiScore:formatTime(currentTime - self._prevBestTime)
+   if SharedState.timer.prevBest > 0 then
+      local currentTime = love.timer.getTime() - SharedState.timer.started
+      if currentTime > SharedState.timer.prevBest then
+         local timerStr = '+ ' .. HiScore:formatTime(currentTime - SharedState.timer.prevBest)
          local mediumFont = SharedState.font.medium
          love.graphics.setFont(mediumFont)
          Colors.useColor(Level.palettes[1], Colors.Value.SKYTOP)
